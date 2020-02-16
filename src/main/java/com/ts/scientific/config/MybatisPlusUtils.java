@@ -44,7 +44,7 @@ public class MybatisPlusUtils {
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("");
         gc.setOpen(false);
-        //gc.setFileOverride(false);
+        gc.setFileOverride(true);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
 
@@ -96,8 +96,9 @@ public class MybatisPlusUtils {
         // 配置自定义输出模板
         //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
         // templateConfig.setEntity("templates/entity2.java");
-        // templateConfig.setService();
-        // templateConfig.setController();
+        templateConfig.setService(null);
+        templateConfig.setServiceImpl(null);
+        templateConfig.setController(null);
 
         templateConfig.setXml(null);
         mpg.setTemplate(templateConfig);
@@ -108,9 +109,6 @@ public class MybatisPlusUtils {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         //strategy.setSuperEntityClass("你自己的父类实体,没有就不用设置!");
         strategy.setEntityLombokModel(true);
-        //strategy.setSuperServiceClass(null);
-        //strategy.setSuperServiceImplClass(null);
-        //strategy.setSuperControllerClass("");
         strategy.setRestControllerStyle(false);
         // 公共父类
         //strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");

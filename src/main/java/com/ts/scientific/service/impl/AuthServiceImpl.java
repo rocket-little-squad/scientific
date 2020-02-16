@@ -17,8 +17,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements IAuthService {
 
-    @Override
-    public void t1() {
-
-    }
 }

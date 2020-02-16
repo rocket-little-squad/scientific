@@ -1,6 +1,8 @@
 package com.ts.scientific.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,6 +26,7 @@ public class Auth implements Serializable {
     /**
      * 权限id
      */
+    @TableId(value = "auth_id", type = IdType.AUTO)
     private Integer authId;
 
     /**

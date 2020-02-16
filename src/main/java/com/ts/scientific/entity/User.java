@@ -1,6 +1,8 @@
 package com.ts.scientific.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,17 +26,13 @@ public class User implements Serializable {
     /**
      * 用户id
      */
+    @TableId(value = "user_id", type = IdType.AUTO)
     private Integer userId;
 
     /**
      * 用户名字
      */
     private String userName;
-
-    /**
-     * 角色code
-     */
-    private String userCode;
 
     /**
      * 部门名字
