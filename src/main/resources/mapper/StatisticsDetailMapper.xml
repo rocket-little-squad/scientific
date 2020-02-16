@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ts.scientific.mapper.StatisticsDetailMapper">
 
+    <select id="getStatistics" resultType="com.ts.scientific.dto.StatisticsDetailDto" resultMap="java.util.Map">
+
+        SELECT u.dep_name as 'depName' , u.user_name as 'userName' ,   FROM user as u,statistics_detail as s where  u.user_id = s.user_id
+          <if test="depName != null">
+          AND    u.dep_name = #{depName}
+          </if>
+          <if test="depName != null">
+          AND    u.user_name = #{depName}
+          </if>
+    </select>
 </mapper>

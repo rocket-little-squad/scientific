@@ -2,6 +2,7 @@ package com.ts.scientific.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/scientific")
 public class ScientificController {
 
-
+        @GetMapping("/t1")
+        public Object t1(){
+            throw new BizException("错误");
+        }
 
 }
