@@ -49,8 +49,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Object queryAllUser(UserVo userVo) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
-                .eq(StringUtils.isBlank(userVo.getPhone()), User::getPhone, userVo.getPhone())
-                .eq(StringUtils.isBlank(userVo.getUserName()), User::getUserName, userVo.getUserName());
+                .eq(StringUtils.isNotBlank(userVo.getPhone()), User::getPhone, userVo.getPhone())
+                .eq(StringUtils.isNotBlank(userVo.getUserName()), User::getUserName, userVo.getUserName());
         Page<User> userPage = userMapper.selectPage(new Page<>(userVo.getPage(), userVo.getLimit()), queryWrapper);
         List<User> users = userPage.getRecords();
         return RepResult.repResult(0, "查询成功", users, (int) userPage.getTotal());

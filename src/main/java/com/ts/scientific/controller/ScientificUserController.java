@@ -27,8 +27,8 @@ public class ScientificUserController {
     /**
      * 加载用户列表数据
      */
-    @GetMapping("/loadAllUser")
-    public Object loadAllUser(UserVo userVo) {
+    @PostMapping("/loadAllUser")
+    public Object loadAllUser(@RequestBody UserVo userVo) {
         return userServiceImpl.queryAllUser(userVo);
     }
 
@@ -39,7 +39,7 @@ public class ScientificUserController {
      * @return
      */
     @PostMapping("/addUser")
-    public Object addUser(UserVo userVo) {
+    public Object addUser(@RequestBody UserVo userVo) {
         return userServiceImpl.insertSelective(userVo);
     }
 
@@ -50,14 +50,14 @@ public class ScientificUserController {
      * @return
      */
     @PostMapping("/updateUser")
-    public Object updateUser(UserVo userVo) {
+    public Object updateUser(@RequestBody UserVo userVo) {
         return userServiceImpl.updateByPrimaryKeySelective(userVo);
     }
 
     /**
      * 删除用户
      */
-    @PostMapping("/deleteUser")
+    @GetMapping("/deleteUser")
     public Object deleteUser(String userId) {
         return userServiceImpl.deleteByPrimaryKey(userId);
     }
