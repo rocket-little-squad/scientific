@@ -6,9 +6,9 @@
     <title>layout 后台大布局 - Layui</title>
     <link rel="stylesheet" href="./layui/css/layui.css">
     <script src="./layui/layui.js"></script>
+    <script src="./layui/layui.all.js"></script>
     <script src="./js/jquery-3.4.1.js"></script>
-    <script src="./js/jquery-3.4.1.js"></script>
-
+    <script src="./config/config.js"></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -16,11 +16,11 @@
         <div class="layui-logo">layui 后台布局</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
-                <a href="javascript:;">
+                <a href="javascript:;" id="name">
                     贤心
                 </a>
             </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
+            <li class="layui-nav-item"><a href="javascript:;" id="loginOut">退出</a></li>
         </ul>
     </div>
 
@@ -31,8 +31,8 @@
                 <li class="layui-nav-item"><a href="./performanceMsg/performance.html" target="contentFrame">科研绩效</a></li>
                 <li class="layui-nav-item"><a href="" target="contentFrame">科研项目</a></li>
                 <li class="layui-nav-item"><a href="" target="contentFrame">科研信息</a></li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">系统设置</a>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">系统设置</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;">权限管理</a></dd>
                         <dd><a href="javascript:;">角色管理</a></dd>
@@ -56,12 +56,38 @@
     </div>
 </div>
 <script>
-    layui.use('element', function(){
+
+    $(function () {
+        $("#name").text(sessionStorage.getItem("userName"));
+    })
+    layui.use('element', function() {
         var element = layui.element;
-        var i = [1,2]
-        i.push(3)
-        console.log(i)
-    });
+    }
+    $("#loginOut").click(function () {
+        debugger;
+        console.log(12312)
+        $.ajax({
+            type: "GET",
+            url: dev+"ScientificUser/loginOut",
+            async:false,
+            data: {
+            },
+            success: function(res){
+                if (res.code==0){
+                    layer.msg(res.msg)
+                    console.log(res)
+                    // $.cookie('userName',res.data.userName);
+                    sessionStorage.removeItem("userName")
+                    sessionStorage.removeItem("userId");
+                    window.location.href="index.html"
+                }else {
+                    layer.msg(res.msg)
+                }
+            }
+        })
+    })
+
+
 </script>
 </body>
 </html>

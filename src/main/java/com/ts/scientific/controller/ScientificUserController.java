@@ -1,6 +1,7 @@
 package com.ts.scientific.controller;
 
 import com.ts.scientific.service.impl.UserServiceImpl;
+import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,14 +62,22 @@ public class ScientificUserController {
         return userServiceImpl.deleteByPrimaryKey(userId);
     }
 
-
+    /**
+     * 登录
+     */
     @GetMapping("/login")
     public Object login(String email, String password, HttpServletRequest request){
        return userServiceImpl.login(email,password,request);
     }
 
-
-
+    /**
+     * 登出
+     */
+    @GetMapping("/loginOut")
+    public Object loginOut(HttpServletRequest request){
+        request.getSession().removeAttribute("user");
+        return RepResult.repResult(0,"登出",null);
+    }
 
 
 }

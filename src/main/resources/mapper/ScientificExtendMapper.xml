@@ -4,13 +4,13 @@
 
     <select id="getStatistics" resultType="com.ts.scientific.dto.StatisticsDetailDto" parameterType="com.ts.scientific.vo.StatisticsDetailVO">
         SELECT u.dep_name as 'depName' , u.user_name as 'userName',
-        <if test="dimension == '年'">
+        <if test='dimension ="年"'>
             DATE_FORMAT(s.create_time,'%Y') as statistic,
         </if>
-        <if test="dimension == '月'">
+        <if test='dimension == "月"'>
             DATE_FORMAT(s.create_time,'%Y-%m') as statistic,
         </if>
-        <if test="dimension == '日'">
+        <if test='dimension == "日"'>
             DATE_FORMAT(s.create_time,'%Y-%m-%d') as statistic,
         </if>
         sum(s.score) as score
