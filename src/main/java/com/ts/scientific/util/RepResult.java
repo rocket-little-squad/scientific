@@ -8,19 +8,19 @@ import java.io.Serializable;
 @Data
 public class RepResult implements Serializable {
 
-    public static JSONObject repResult(int code,String msg,Object date){
+    public static JSONObject repResult(int code,String msg,Object data){
         JSONObject res = new JSONObject();
         res.put("code",code);
         res.put("msg",msg);
-        res.put("date",date);
+        res.put("data",data);
         return res;
     }
 
-    public static JSONObject repResult(int code,String msg,Object date,int count){
+    public static JSONObject repResult(int code,String msg,Object data,int count){
         JSONObject res = new JSONObject();
         res.put("code",code);
         res.put("msg",msg);
-        res.put("date",date);
+        res.put("data",data);
         res.put("count",count);
         return res;
     }
