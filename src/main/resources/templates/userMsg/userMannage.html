@@ -2,9 +2,185 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>用户管理</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
+    <script src="../layui/layui.all.js"></script>
 </head>
-<body>
-
+<body class="global-body-mp">
+<div class="layui-tab-item layui-show" style="margin-top: 80px">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-row">
+                        <div class="layui-col-xs12">
+                            <div class="layui-inline" id="department" style="margin-top: 5px;display: none" >
+                                <label class="layui-form-label" style="width: 50px">部门：</label>
+                                <div  class="layui-input-block" style="width: 200px">
+                                    <select id="dep"  >
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline" style="margin-top: 5px;" >
+                                <label class="layui-form-label">用户名:</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="userName"  lay-filter="userName" placeholder="请输入用户名" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item" style="margin-left: 600px">
+                            <div class="layui-inline">
+                                <button class="layui-btn layui-btn-normal" id="find">查询</button>
+                            </div>
+                            <!--<div class="layui-inline">
+                                <button class="layui-btn" id="reset">重置</button>
+                            </div>-->
+                            <div class="layui-inline">
+                                <button class="layui-btn" id="add" >添加员工</button>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" id="addDep" style="display: none">添加部门</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="info"></div>
 </body>
 </html>
+<script type="text/html" id="barDemo">
+    <a href="javascript:editUser('{{d.userId}}');" class="layui-btn layui-btn-mini layui-btn-danger merchant-freeze">编辑</a>
+    <a href="javascript:delUser('{{d.userId}}');" class="layui-btn layui-btn-mini layui-btn-danger merchant-freeze">删除</a>
+</script>
+<script>
+    function editUser(userId){
+        layui.use('layer',function () {
+            layer.open({
+                type: 2,
+                title: '信息修改',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['420px', '520px'],
+                content: 'editUser.html?userId='+userId
+            });
+        });
+    }
+
+
+    $('#add').click(function () {
+        layui.use('layer',function () {
+            layer.open({
+                type: 2,
+                title: '员工添加',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['420px', '520px'],
+                content: 'addUser.html'
+            });
+        });
+    })
+
+    $("#find").click(function () {
+        console.log("find");
+        find();
+    })
+
+
+    $("#reset").click(function () {
+        reload();
+    })
+
+    function delUser(userId){
+        $.ajax({
+            type: "POST",
+            url: directory+"user/delUser",
+            async:false,
+            data: {
+            },
+            success: function(res) {
+                layer.msg(res.msg)
+            }
+        })
+    }
+
+    function find(){
+        var depId = $('#dep').val();
+        var userName = $('#userName').val();
+        layui.table.reload('info',{
+            where: {
+                depId:depId,
+                userName:userName
+            }});
+    }
+
+
+    function reload(){
+        layui.table.reload('info',{
+            where: {
+
+            }});
+    }
+
+    layui.use('form', function() {
+        var form = layui.form;
+        $.ajax({
+            type: "POST",
+            url: dev+"user/loadAllUser",
+            async:false,
+            data: {
+            },
+            success: function(res) {
+                var data = res.data;
+                $.each(data,function(index,item){
+                    $("#dep")
+                        .append(
+                            "<option value='" + item.depId+"'>"
+                            + item.depName + "</option>");
+                })
+                //form.render(null, 'merchant');
+                form.render();
+            }
+        })
+    })
+
+    layui.use('table', function(){
+        var tableWidth = $("#info").width() - 28;
+        var table = layui.table;
+        table.render({
+            type: "POST",
+            id:'info',
+            elem: '#barDemo'
+            ,url:dev + 'ScientificUser/loadAllUser'
+            ,request: {
+                page: 'currentPage'
+                ,limit: 'pageSize'
+            },
+            response: {
+                statusName: 'code'
+                ,statusCode: 0
+                ,msgName: 'msg'
+                ,countName: 'count'
+                ,dataName: 'data'
+            }
+            ,cols: [[
+                {field:'userId', width: tableWidth*0.1, title: '用户id' },
+                {field:'userName', width: tableWidth*0.1, title: '用户名' },
+                {field:'email', width:tableWidth*0.15, title: '邮箱'},
+                {field:'depName', width:tableWidth*0.1, title: '部门名字'},
+                {field:'createName', width:tableWidth*0.1, title: '创建人'},
+                {field:'password', width:tableWidth*0.1, title: '密码'},
+                {field:'roleId', title: '角色', width: tableWidth*0.1 }, //minWidth：局部定义当前单元格的最小宽度
+                {field:'phone', title: '手机号',width: tableWidth*0.1},
+                {field:'createTime', title: '创建时间', width: tableWidth*0.15}
+            ]]
+            ,page: true
+        });
+    });
+</script>

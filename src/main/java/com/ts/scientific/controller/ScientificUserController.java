@@ -27,8 +27,8 @@ public class ScientificUserController {
     /**
      * 加载用户列表数据
      */
-    @PostMapping("/loadAllUser")
-    public Object loadAllUser(@RequestBody UserVo userVo) {
+    @GetMapping("/loadAllUser")
+    public Object loadAllUser(UserVo userVo) {
         return userServiceImpl.queryAllUser(userVo);
     }
 
