@@ -13,5 +13,9 @@ public class StatisticsDetailDto implements Serializable {
     private String depName;
 
     private BigDecimal score;
+    /**
+     * 统计维度
+     */
+    private String statistic;
 
 }
