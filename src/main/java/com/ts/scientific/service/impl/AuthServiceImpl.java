@@ -2,7 +2,7 @@ package com.ts.scientific.service.impl;
 
 import com.ts.scientific.entity.Auth;
 import com.ts.scientific.mapper.AuthMapper;
-import com.ts.scientific.service.IAuthService;
+import com.ts.scientific.service.AuthService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2020-02-16
  */
 @Service
-public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements IAuthService {
+public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements AuthService {
 
 }

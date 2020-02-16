@@ -2,7 +2,7 @@ package com.ts.scientific.service.impl;
 
 import com.ts.scientific.entity.ScientificInfo;
 import com.ts.scientific.mapper.ScientificInfoMapper;
-import com.ts.scientific.service.IScientificInfoService;
+import com.ts.scientific.service.ScientificInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2020-02-16
  */
 @Service
-public class ScientificInfoServiceImpl extends ServiceImpl<ScientificInfoMapper, ScientificInfo> implements IScientificInfoService {
+public class ScientificInfoServiceImpl extends ServiceImpl<ScientificInfoMapper, ScientificInfo> implements ScientificInfoService {
 
 }

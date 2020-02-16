@@ -14,7 +14,7 @@ import java.util.Map;
  * @author 
  * @since 2020-02-16
  */
-public interface IAuthService extends IService<Auth> {
+public interface AuthService extends IService<Auth> {
 
 
 }

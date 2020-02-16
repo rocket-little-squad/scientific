@@ -1,16 +1,16 @@
 package com.ts.scientific.service;
 
-import com.ts.scientific.entity.Role;
+import com.ts.scientific.entity.ScientificInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- * 角色表 服务类
+ * 科研信息表 服务类
  * </p>
  *
  * @author 
  * @since 2020-02-16
  */
-public interface IRoleService extends IService<Role> {
+public interface ScientificInfoService extends IService<ScientificInfo> {
 
 }
