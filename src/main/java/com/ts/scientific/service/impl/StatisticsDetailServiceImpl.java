@@ -3,7 +3,7 @@ package com.ts.scientific.service.impl;
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.StatisticsDetail;
 import com.ts.scientific.mapper.StatisticsDetailMapper;
-import com.ts.scientific.service.IStatisticsDetailService;
+import com.ts.scientific.service.StatisticsDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.vo.StatisticsDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2020-02-16
  */
 @Service
-public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMapper, StatisticsDetail> implements IStatisticsDetailService {
+public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMapper, StatisticsDetail> implements StatisticsDetailService {
 
     @Autowired
     private StatisticsDetailMapper statisticsDetailMapper;

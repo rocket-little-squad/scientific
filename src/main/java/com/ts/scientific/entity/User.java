@@ -64,5 +64,10 @@ public class User implements Serializable {
      */
     private String phone;
 
+    /**
+     * 角色id
+     */
+    private Integer roleId;
+
 
 }

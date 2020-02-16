@@ -15,7 +15,7 @@ import java.util.List;
  * @author 
  * @since 2020-02-16
  */
-public interface IStatisticsDetailService extends IService<StatisticsDetail> {
+public interface StatisticsDetailService extends IService<StatisticsDetail> {
 
     List<StatisticsDetailDto> getStatistics(StatisticsDetailVO statisticsDetailVO);
 

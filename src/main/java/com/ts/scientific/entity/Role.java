@@ -27,11 +27,6 @@ public class Role implements Serializable {
     private Integer roleId;
 
     /**
-     * 用户id
-     */
-    private Integer userId;
-
-    /**
      * 角色名称
      */
     private String roleName;

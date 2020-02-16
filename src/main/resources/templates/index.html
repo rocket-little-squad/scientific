@@ -1,65 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
+    <meta charset="UTF-8">
+    <title>企业项目管理</title>
     <link rel="stylesheet" href="./layui/css/layui.css">
     <script src="./layui/layui.js"></script>
     <script src="./js/jquery-3.4.1.js"></script>
+    <script src="./config/config.js"></script>
 </head>
-<body class="layui-layout-body">
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-                <a href="javascript:;">
-                    贤心
-                </a>
-            </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
-        </ul>
-    </div>
-
-    <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item"><a href="./performanceMsg/performance.html" target="contentFrame">科研绩效</a></li>
-                <li class="layui-nav-item"><a href="" target="contentFrame">科研项目</a></li>
-                <li class="layui-nav-item"><a href="" target="contentFrame">科研信息</a></li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">系统设置</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">权限管理</a></dd>
-                        <dd><a href="javascript:;">角色管理</a></dd>
-                        <dd><a href="javascript:;">人员管理</a></dd>
-                    </dl>
-                </li>
-            </ul>
+<style>
+    #log{
+        position: absolute;
+        left: 550px;
+        top: 250px;
+    }
+    body{
+        background-repeat:no-repeat;
+        background-size:cover;
+    }
+</style>
+<body >
+<div id="log">
+    <h1 style="padding-left: 60px;padding-bottom: 20px">教师科研积分系统</h1>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱账号:</label>
+            <div class="layui-input-inline">
+                <input type="text" id="email"  placeholder="请输入账号" class="layui-input">
+            </div>
         </div>
-    </div>
-
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="width:100%;height:100%;">
-            <iframe src="javascript:;" id="contentFrame" name="contentFrame" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码:</label>
+            <div class="layui-input-inline">
+                <input type="password" id="password"   placeholder="请输入密码" class="layui-input">
+            </div>
         </div>
-    </div>
-
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © layui.com - 底部固定区域
-    </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label">验证码:</label>-->
+<!--            <div class="layui-input-inline">-->
+<!--                <input type="text" id="yz"  placeholder="请输入验证码" class="layui-input">-->
+<!--            </div>-->
+<!--            <span style="padding-left:20px;margin-top: 20px">-->
+<!--            <img src="user/captcha" onclick="this.src=this.src+'?temp='+Math.random();">-->
+<!--        </span>-->
+<!--        </div>-->
+        <div class="layui-form-item" >
+            <button id="login" type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">登录</button>
+        </div>
+    </form>
 </div>
 <script>
-    layui.use('element', function(){
-        var element = layui.element;
-        var i = [1,2]
-        i.push(3)
-        console.log(i)
-    });
+
+
+    layui.use('layer',function () {
+        var  layer = layui.layer
+        $("#login").click(function () {
+                var email = $("#email").val();
+                var password=$("#password").val();
+                var   checkCode=$("#yz").val();
+                if(!email){
+                    layer.msg("请输入邮箱账号")
+                }else if(!password){
+                    layer.msg("请输入密码")
+                }else {
+                    $.ajax({
+                        type: "GET",
+                        url: dev+"ScientificUser/login",
+                        async:false,
+                        data: {
+                            email:email,
+                            password:password,
+                        },
+                        success: function(res){
+                            if (res.code==0){
+                                layer.msg(res.msg)
+                                console.log(res)
+                                // $.cookie('userName',res.data.userName);
+                                sessionStorage.setItem("userName",res.data.userName)
+                                sessionStorage.setItem("userId",res.data.userId);
+                                window.location.href="main.html"
+                            }else {
+                                layer.msg(res.msg)
+                            }
+                        }
+                    })
+                }
+            }
+        )
+    })
+
 </script>
 </body>
 </html>

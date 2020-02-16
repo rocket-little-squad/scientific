@@ -2,33 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ts.scientific.mapper.StatisticsDetailMapper">
 
-    <select id="getStatistics" resultType="com.ts.scientific.dto.StatisticsDetailDto" resultMap="com.ts.scientific.vo.StatisticsDetailVO">
-        SELECT u.dep_name as 'depName' , u.user_name as 'userName',
-            <if test="dimension == '年'">
-             DATE_FORMAT(s.create_time,'%Y') as statistic,
-            </if>
-            <if test="dimension == '月'">
-             DATE_FORMAT(s.create_time,'%Y-%m') as statistic,
-            </if>
-            <if test="dimension == '日'">
-             DATE_FORMAT(s.create_time,'%Y-%m-%d') as statistic,
-            </if>
-            sum(s.score) as score
-          FROM user as u,statistics_detail as s where  u.user_id = s.user_id
-          <if test="depName != null">
-          AND    u.dep_name = #{depName}
-          </if>
-          <if test="userName != null">
-          AND    u.user_name = #{userName}
-          </if>
-          <if test="dimension == '年'">
-              GROUP BY statistic ,u.dep_name,u.user_name
-          </if>
-          <if test="dimension == '月'">
-              GROUP BY DATE_FORMAT(s.create_time,'%Y-%m')
-          </if>
-          <if test="dimension == '日'">
-              GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d')
-          </if>
-    </select>
 </mapper>
