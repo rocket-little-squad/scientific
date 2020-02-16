@@ -4,32 +4,36 @@
 
     <select id="getStatistics" resultType="com.ts.scientific.dto.StatisticsDetailDto" parameterType="com.ts.scientific.vo.StatisticsDetailVO">
         SELECT u.dep_name as 'depName' , u.user_name as 'userName',
-        <if test='dimension ="年"'>
+        <if test="dimension == 0">
             DATE_FORMAT(s.create_time,'%Y') as statistic,
         </if>
-        <if test='dimension == "月"'>
+        <if test="dimension == 1">
             DATE_FORMAT(s.create_time,'%Y-%m') as statistic,
         </if>
-        <if test='dimension == "日"'>
+        <if test="dimension == 2">
             DATE_FORMAT(s.create_time,'%Y-%m-%d') as statistic,
         </if>
         sum(s.score) as score
         FROM user as u,statistics_detail as s where  u.user_id = s.user_id
-        <if test="depName != null">
+        <if test="depName != null and depName != ''">
             AND    u.dep_name = #{depName}
         </if>
-        <if test="userName != null">
+        <if test="userName != null and userName != ''">
             AND    u.user_name = #{userName}
         </if>
-        <if test="dimension == '年'">
+        <if test="dimension == 0">
             GROUP BY statistic ,u.dep_name,u.user_name
         </if>
-        <if test="dimension == '月'">
+        <if test="dimension == 1">
             GROUP BY DATE_FORMAT(s.create_time,'%Y-%m')
         </if>
-        <if test="dimension == '日'">
+        <if test="dimension == 2">
             GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d')
         </if>
+        ORDER BY s.score DESC
+        <if test="currentPage != null and currentPage !='' or
+                        pageSize != null and pageSize !=''">
+            LIMIT #{pageSize} OFFSET #{currentPage}
+        </if>
     </select>
-
 </mapper>

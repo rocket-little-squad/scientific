@@ -11,6 +11,9 @@ public class StatisticsDetailVO implements Serializable {
 
     private String depName;
 
-    private String dimension;
+    private Integer dimension;
 
+    private Integer currentPage;
+
+    private Integer pageSize;
 }
