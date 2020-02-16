@@ -1,22 +1,16 @@
 package com.ts.scientific.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.config.BizException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.UserMapper;
-import com.ts.scientific.service.IUserService;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.UserVo;
 import com.ts.scientific.service.UserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ts.scientific.util.RepResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +30,7 @@ import javax.servlet.http.HttpSession;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
 
     @Override
@@ -51,9 +45,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         throw new BizException("检查账号或邮箱");
     }
-    @Resource
-    private UserMapper userMapper;
-
 
     @Override
     public Object queryAllUser(UserVo userVo) {

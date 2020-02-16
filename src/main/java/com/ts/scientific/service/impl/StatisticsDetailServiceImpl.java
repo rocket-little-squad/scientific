@@ -2,6 +2,7 @@ package com.ts.scientific.service.impl;
 
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.StatisticsDetail;
+import com.ts.scientific.mapper.ScientificExtendMapper;
 import com.ts.scientific.mapper.StatisticsDetailMapper;
 import com.ts.scientific.service.StatisticsDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,10 +24,10 @@ import java.util.List;
 public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMapper, StatisticsDetail> implements StatisticsDetailService {
 
     @Autowired
-    private StatisticsDetailMapper statisticsDetailMapper;
+    private ScientificExtendMapper scientificExtendMapper;
 
     @Override
     public List<StatisticsDetailDto> getStatistics(StatisticsDetailVO statisticsDetailVO) {
-        return statisticsDetailMapper.getStatistics(statisticsDetailVO);
+        return scientificExtendMapper.getStatistics(statisticsDetailVO);
     }
 }
