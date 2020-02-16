@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import javax.annotation.Resource;
 
 /**
  *
@@ -58,8 +57,8 @@ public class ScientificUserController {
      * 删除用户
      */
     @PostMapping("/deleteUser")
-    public Object deleteUser(UserVo userVo) {
-        return userServiceImpl.deleteByPrimaryKey(userVo.getUserId());
+    public Object deleteUser(String userId) {
+        return userServiceImpl.deleteByPrimaryKey(userId);
     }
 
 

@@ -80,7 +80,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Object deleteByPrimaryKey(Integer id) {
+    public Object saveUserRole(UserVo userVo) {
+        return null;
+    }
+
+    @Override
+    public Object deleteByPrimaryKey(String id) {
         if (null == id) {
             throw new BizException("删除id为空");
         }

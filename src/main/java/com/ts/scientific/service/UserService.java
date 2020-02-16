@@ -41,6 +41,11 @@ public interface UserService extends IService<User> {
     Object updateByPrimaryKeySelective(User record);
 
 
+    /**
+     * 保存用户和角色之间的关系
+     */
+
+    Object saveUserRole(UserVo userVo);
 
 
     /**
@@ -48,5 +53,5 @@ public interface UserService extends IService<User> {
      * @param id
      * @return
      */
-    Object deleteByPrimaryKey(Integer id);
+    Object deleteByPrimaryKey(String id);
 }
