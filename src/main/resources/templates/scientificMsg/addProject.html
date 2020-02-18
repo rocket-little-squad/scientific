@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/js/layui/css/layui.css"  media="all">
+    <script src="../../lib/js/layui/layui.js" type="text/javascript"></script>
+    <script src="../../lib/js/jquery-3.4.0.min.js" type="text/javascript"></script>
+    <script src="../../lib/js/common.js" type="text/javascript"></script>
+</head>
+<body>
+<form class="layui-form" enctype="multipart/form-data">
+    <input type="hidden" id="reportBookId"/>
+    <input type="hidden" id="isUpdate">
+    <div class="layui-form-item">
+        <label class="layui-form-label">项目类别:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="proType"  required   autocomplete="off"   placeholder="请输入项目类别" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">项目背景:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="proBackground" required     autocomplete="off"  placeholder="请输入项目背景" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">项目目标描述:</label>
+        <div class="layui-input-block">
+            <textarea name="desc" id="proDescribe" required placeholder="请输入项目目标描述" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">技术可行性分析:</label>
+        <div class="layui-input-block">
+            <textarea name="desc" id="proFeasibility" required placeholder="请输入技术可行性分析" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">申请金额:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="proMoney" required  placeholder="请输入项目申请金额" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" id="down" style="display: none">
+        <button type="button" id="downFile" style="margin-left: 200px" class="layui-btn">文件下载</button>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">风险分析:</label>
+        <div class="layui-input-block">
+            <textarea name="desc" id="proBenefit" required placeholder="请输入风险分析" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <button type="button" name="file" style="margin-left: 100px" class="layui-btn" id="address">
+            <i class="layui-icon">&#xe67c;</i>上传报告书
+        </button>
+    </div>
+    <div class="layui-form-item" >
+        <button id="confirm"  type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">确认</button>
+    </div>
+</form>
+</body>
+</html>
+<script>
+
+    $(function () {
+
+    })
+
+    $("#downFile").click(function () {
+        down( $('#reportBookId').val());
+    })
+
+    function down(path){
+        window.location.href = directory + "pro/downPlanOrReport?reportBookId="+path+"&per=report"
+    }
+    $('#confirm').click(function () {
+            return true;
+    })
+
+    layui.use('form', function() {
+        var form = layui.form;
+        $.ajax({
+            type: "POST",
+            url: dev+"user/dep",
+            async:false,
+            data: {
+            },
+            success: function(res) {
+                var data = res.data;
+                $.each(data,function(index,item){
+                    $("#dep")
+                        .append(
+                            "<option value='" + item.depId+"'>"
+                            + item.depName + "</option>");
+                })
+                //form.render(null, 'merchant');
+                form.render();
+            }
+        })
+</script>

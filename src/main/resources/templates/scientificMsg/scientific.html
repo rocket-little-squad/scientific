@@ -42,6 +42,9 @@
                             <!--<div class="layui-inline">
                                 <button class="layui-btn" id="reset">重置</button>
                             </div>-->
+                            <div class="layui-inline">
+                                <button class="layui-btn" id="addPro" >申请项目</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -54,8 +57,22 @@
 </html>
 <script>
 
+    $('#addPro').click(function () {
+        layui.use('layer',function () {
+            layer.open({
+                type: 2,
+                title: '申请项目',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['420px', '520px'],
+                content: 'addProject.html'
+            });
+        });
+    })
+
+
+
     $("#find").click(function () {
-        console.log(123)
         find();
     })
 
@@ -68,27 +85,7 @@
                 depName:depName
             }});
     }
-    layui.use('form', function() {
-        var form = layui.form;
-        $.ajax({
-            type: "POST",
-            url: dev+"user/loadAllUser",
-            async:false,
-            data: {
-            },
-            success: function(res) {
-                var data = res.data;
-                $.each(data,function(index,item){
-                    $("#dep")
-                        .append(
-                            "<option value='" + item.depId+"'>"
-                            + item.depName + "</option>");
-                })
-                //form.render(null, 'merchant');
-                form.render();
-            }
-        })
-    })
+
 
     function reload(){
         layui.table.reload('info',{
@@ -120,7 +117,7 @@
                 ,dataName: 'data'
             }
             ,cols: [[
-                {field:'userName', width: tableWidth*0.1, title: '用户名', }
+                {field:'userName', width: tableWidth*0.1, title: '姓名', }
                 ,{field:'depName', width:tableWidth*0.15, title: '部门'}
                 ,{field:'score', width:tableWidth*0.1, title: '积分',}
                 ,{field:'statistic', width:tableWidth*0.1, title: '时间维度'}

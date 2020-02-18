@@ -1,13 +1,18 @@
 package com.ts.scientific.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ts.scientific.dto.StatisticsDetailDto;
+import com.ts.scientific.entity.ScientificInfoConf;
 import com.ts.scientific.service.StatisticsDetailService;
+import com.ts.scientific.service.impl.ScientificInfoConfServiceImpl;
+import com.ts.scientific.service.impl.ScientificInfoServiceImpl;
 import com.ts.scientific.service.impl.StatisticsDetailServiceImpl;
 import com.ts.scientific.util.PageUtil;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.StatisticsDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +34,11 @@ public class ScientificController {
         @Autowired
         private StatisticsDetailServiceImpl statisticsDetailServiceImpl;
 
+        @Autowired
+        private ScientificInfoConfServiceImpl scientificInfoConfServiceImpl;
+
+        @Autowired
+        private ScientificInfoServiceImpl scientificInfoServiceImpl;
         /**
          * 科研绩效查询
          */
@@ -44,5 +54,27 @@ public class ScientificController {
                 int count = statisticsDetailServiceImpl.getStatistics(statisticsDetailVO).size();
                 return RepResult.repResult(0, "成功", statisticsDetailDtos, count);
         }
+
+        /**
+         * 科研项目添加
+         */
+
+
+        /**
+         * 项目类别
+         */
+        @GetMapping("/getType")
+        public Object getType(){
+             return scientificInfoServiceImpl.list();
+        }
+
+        /**
+         * 计算条件查询
+         */
+        public Object getCalculate(Integer projectTypeId){
+                return scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
+                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId));
+        }
+
 
 }
