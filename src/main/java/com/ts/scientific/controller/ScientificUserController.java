@@ -38,8 +38,8 @@ public class ScientificUserController {
      * @param userVo
      * @return
      */
-    @PostMapping("/addUser")
-    public Object addUser(@RequestBody UserVo userVo) {
+    @GetMapping("/addUser")
+    public Object addUser(UserVo userVo) {
         return userServiceImpl.insertSelective(userVo);
     }
 
@@ -49,8 +49,8 @@ public class ScientificUserController {
      * @param userVo
      * @return
      */
-    @PostMapping("/updateUser")
-    public Object updateUser(@RequestBody UserVo userVo) {
+    @GetMapping("/updateUser")
+    public Object updateUser(UserVo userVo) {
         return userServiceImpl.updateByPrimaryKeySelective(userVo);
     }
 

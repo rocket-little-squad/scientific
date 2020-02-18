@@ -1,186 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>用户管理</title>
-    <link rel="stylesheet" href="../layui/css/layui.css">
-    <script src="../layui/layui.js"></script>
-    <script src="../js/jquery-3.4.1.js"></script>
-    <script src="../config/config.js"></script>
-    <script src="../layui/layui.all.js"></script>
+    <meta charset="utf-8">
+    <title>用户管理-用户列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="../config/config.js" media="all" />
+    <link rel="stylesheet" href="../layui/layui.all.js" media="all" />
+    <link rel="stylesheet" href="../js/jquery-3.4.1.js" media="all" />
+    <link rel="stylesheet" href="../layui_ext/dtree/dtree.css" media="all" />
+    <link rel="stylesheet" href="../layui_ext/dtree/font/dtreefont.css" media="all" />
+    <style type="text/css">
+        .select-test{position: absolute;max-height: 500px;height: 350px;overflow: auto;width: 100%;z-index: 123;display: none;border:1px solid silver;top: 42px;}
+        .layui-show{display: block!important;}
+    </style>
 </head>
-<body class="global-body-mp">
-<div class="layui-tab-item layui-show" style="margin-top: 80px">
-    <div class="layui-row">
-        <div class="layui-col-xs12">
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <div class="layui-row">
-                        <div class="layui-col-xs12">
-                            <div class="layui-inline" id="department" style="margin-top: 5px;display: none" >
-                                <label class="layui-form-label" style="width: 50px">部门：</label>
-                                <div  class="layui-input-block" style="width: 200px">
-                                    <select id="dep"  >
-                                        <option value=""></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="layui-inline" style="margin-top: 5px;" >
-                                <label class="layui-form-label">用户名:</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="userName"  lay-filter="userName" placeholder="请输入用户名" class="layui-input">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-form-item" style="margin-left: 600px">
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-normal" id="find">查询</button>
-                            </div>
-                            <!--<div class="layui-inline">
-                                <button class="layui-btn" id="reset">重置</button>
-                            </div>-->
-                            <div class="layui-inline">
-                                <button class="layui-btn" id="add" >添加员工</button>
-                            </div>
-                            <div class="layui-inline">
-                                <button class="layui-btn" id="addDep" style="display: none">添加部门</button>
-                            </div>
-                        </div>
-                    </div>
+<body  class="childrenBody">
+<!-- 查询条件开始 -->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>查询条件</legend>
+</fieldset>
+<form action="" id="searchFrm" method="post" lay-filter="searchFrm">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名称:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="button" class="layui-btn" id="doSearch" >查询</button>
+            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+        </div>
+    </div>
+</form>
+<!-- 查询条件结束 -->
+<!-- 数据表格开始 -->
+<table class="layui-hide" lay-filter="userTable" id="userTable"></table>
+
+<div class="layui-hide" id="userToolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm"  lay-event="addUser">添加用户</button>
+    </div>
+</div>
+<div class="layui-hide" id="userBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs"  lay-event="selectUserRole" >分配角色</a>
+</div>
+
+<!-- 添加和修改弹出层 -->
+<div style="display: none; padding: 10px" id="addOrUpdateView">
+    <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm">
+
+        <div class="layui-form-item">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名称</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="userId">
+                    <input type="text" name="userName" id="userName"
+                           autocomplete="off" placeholder="请输入用户名称" class="layui-input">
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="email" id="email" lay-verify="email"
+                           autocomplete="off" placeholder="请输入邮箱" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <label class="layui-form-label">部门名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="depName" id="depName"
+                       autocomplete="off" placeholder="请输入部门名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+
+
+            <div class="layui-inline">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="phone" id="phone"
+                           autocomplete="off" placeholder="请输入手机号" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="doSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
 </div>
-<div id="info"></div>
+
+
+<!-- 分配角色的弹出层开始 -->
+<div id="selectUserRoleView" style="display: none;">
+    <table class="layui-hide" id="roleTable" lay-filter="roleTable"></table>
+</div>
+<!-- 分配角色的弹出层结束 -->
+
+
+
+<!-- 数据表格结束 -->
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../layui_ext/dist/dtree.js"></script>
+
+<script type="text/javascript">
+    var tableIns;//提升作用域
+
+    layui.config({
+        base : "../layui_ext/dist/"
+    }).extend({
+        "dtree" : "dtree"
+    })
+    layui.use(["form","table","jquery","layer","dtree",'laydate'],function(){
+        var table=layui.table;
+        var form=layui.form;
+        var $=layui.jquery;
+        var layer=layui.layer;
+        var dtree = layui.dtree;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem:"#hiredate"
+        });
+        tableIns=table.render({
+            elem: '#userTable'
+            ,url: '/scientific/ScientificUser/loadAllUser'
+            ,toolbar: '#userToolbar'
+            ,page:true
+            ,height:'full-130'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [ [
+                {field:'userId', width: 100, title: '用户id' },
+                {field:'userName', width: 100, title: '用户名' },
+                {field:'email', width:200, title: '邮箱'},
+                {field:'depName', width:140, title: '部门名字'},
+                {field:'createName', width:130, title: '创建人'},
+                {field:'password', width:100, title: '密码'},
+                {field:'roleId', title: '角色', width: 100 }, //minWidth：局部定义当前单元格的最小宽度
+                {field:'phone', title: '手机号',width: 150},
+                {field:'createTime', title: '创建时间', width: 150},
+                {fixed: 'right', title:'操作',align:'center', toolbar: '#userBar', width:300}
+            ] ]
+            ,done:function(res, curr){
+                var brforeCurr = curr; // 获得当前页码
+                var dataLength = res.data.length; // 获得当前页的记录数
+                var count = res.count; // 获得总记录数
+                if(dataLength == 0 && count != 0){ //如果当前页的记录数为0并且总记录数不为0
+                    table.reload("userTable",{ // 刷新表格到上一页
+                        page:{
+                            curr:brforeCurr-1
+                        }
+                    });
+                }
+            }
+        });
+        //模糊查询
+        $("#doSearch").click(function(){
+            var params=$("#searchFrm").serialize();
+            tableIns.reload({
+                url:'/scientific/ScientificUser/loadAllUser?'+params
+            })
+        });
+        //监听头工具行的事件
+        table.on('toolbar(userTable)', function(obj){
+            switch(obj.event){
+                case 'addUser':
+                    openAddUserView();
+                    break;
+            };
+        });
+
+        //监听行工具行的事件
+        table.on('tool(userTable)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent=obj.event;
+            if(layEvent === 'del'){ //删除
+                deleteUserById(data);
+            } else if(layEvent === 'edit'){ //编辑
+                openUpdateUserView(data);
+            }else if(layEvent === 'updatePWD'){//重置密码
+                updatePWD(data);
+            }else if(layEvent === 'selectUserRole'){//分配权限
+                selectUserRole(data);
+            }
+        });
+
+        var mainIndex;
+        var url;
+        function openAddUserView(){
+            mainIndex=layer.open({
+                type:1,
+                title:'添加用户',
+                content:$("#addOrUpdateView"),
+                area:['400px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                success:function(layero, index){
+                    //清空表单
+                    $("#dataFrm")[0].reset();
+                    //移除下拉列表展开的样式
+                    $("#accordionDeptid").removeClass("layui-show layui-anim layui-anim-upbit");
+                    //加载最大的排序码
+                    // $.get("/user/loadUserMaxOrderNum",function(obj){
+                    //     $("#ordernum").val(obj.value);
+                    // });
+                    url="/scientific/ScientificUser/addUser";
+                }
+            })
+        };
+        /*//初始化所属部门里面的下拉树
+        var accordionUserTree = dtree.render({
+            elem: "#accordionDeptTree",
+            url: "/user/loadUserTreeJson",
+            dataStyle: "layuiStyle",  //使用layui风格的数据格式
+            dataFormat: "list",  //配置data的风格为list
+            response:{message:"msg",statusCode:0}, //修改response中返回数据的定义
+            accordion:true
+        });
+        //弹出层里面的下拉树加事件
+        $("#selDeptid").on("click",function(){
+            $(this).toggleClass("layui-form-selected");
+            $("#accordionDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
+        });
+        dtree.on("node(accordionDeptTree)", function(obj){
+            $("#name_deptid").val(obj.param.context);
+            $("#deptid").val(obj.param.nodeId);
+            $("#selDeptid").toggleClass("layui-form-selected");
+            $("#accordionDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
+        });
+        //初始化领导部门里面的下拉树
+        var accordionUserTree = dtree.render({
+            elem: "#accordionLeaderDeptTree",
+            url: "/user/loadUserTreeJson",
+            dataStyle: "layuiStyle",  //使用layui风格的数据格式
+            dataFormat: "list",  //配置data的风格为list
+            response:{message:"msg",statusCode:0}, //修改response中返回数据的定义
+            accordion:true
+        });
+        //弹出层里面的下拉树加事件
+        $("#selLeaderDeptid").on("click",function(){
+            $(this).toggleClass("layui-form-selected");
+            $("#accordionLeaderDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
+        });
+        dtree.on("node(accordionLeaderDeptTree)", function(obj){
+            $("#name_leaderDeptid").val(obj.param.context);
+            $("#selLeaderDeptid").toggleClass("layui-form-selected");
+            $("#accordionLeaderDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
+            var leaderDeptid = obj.param.nodeId;
+            initLeaderSelect(leaderDeptid);
+        });
+        function initLeaderSelect(leaderDeptid,selectedId){
+            $.post("/user/loadUserByDeptid",{deptid:leaderDeptid},function(obj){
+                var html='<option value="">请选择领导名称</option>';
+                $.each(obj,function(index,item){
+                    html+='<option value='+item.id+'>'+item.name+'</option>';
+                });
+                $("#mgr").html(html);
+                if(selectedId!=undefined){
+                    $("#mgr").val(selectedId);
+                }
+                //更新表单的渲染
+                form.render("select");
+            });
+        }*/
+        //提交事件
+        form.on('submit(doSubmit)',function(data){
+            var params=$("#dataFrm").serialize();
+            $.get(url,params,function(obj){
+                // layer.msg(obj.msg);
+                //关闭弹出层
+                layer.close(mainIndex);
+                //刷新数据表格
+                tableIns.reload();
+                //刷新左边的树
+                window.parent.left.userTree.reload();
+                //刷新下拉列表的树
+                accordionUserTree.reload();
+            })
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+        //打开修改的弹出层
+        function openUpdateUserView(data){
+            mainIndex=layer.open({
+                type:1,
+                title:'修改用户',
+                content:$("#addOrUpdateView"),
+                area:['400px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                success:function(layero, index){
+                    //移除下拉列表展开的样式
+                    $("#accordionDeptid").removeClass("layui-show layui-anim layui-anim-upbit");
+                    form.val("dataFrm",data);
+                    ///判断是否是否根节，如果是节点 禁用下拉
+                  /*  unSelectDeptTree(data);//反选树
+                    unSelectLeaderDeptTree(data);//反选树*/
+                    url="/scientific/ScientificUser/updateUser";
+                }
+            });
+        };
+        //反选树
+        function unSelectDeptTree(data){
+            var params = dtree.dataInit("accordionDeptTree", data.deptid);
+            $("#name_deptid").val(params.context);
+        };
+        //反选树
+        function unSelectLeaderDeptTree(data){
+            var leaderid = data.mgr;//领导id
+            $.get("/user/queryUserById",{id:leaderid},function(obj){
+                var params = dtree.dataInit("accordionLeaderDeptTree", obj.deptid);
+                $("#name_leaderDeptid").val(params.context);
+                initLeaderSelect(obj.deptid,obj.id);
+            });
+        };
+        //删除用户
+        function  deleteUserById(data){
+            layer.confirm('真的要删除【'+data.userName+'】这个用户么？', function(index){
+                //向服务端发送删除指令
+                $.get("/scientific/ScientificUser/deleteUser",{userId:data.userId},function(reslult){
+                    layer.msg(reslult.msg);
+                    layer.close(index);
+                    //刷新数据表格
+                    tableIns.reload();
+                })
+            });
+        };
+        //用户名失去焦点事件
+        $("#name").on("blur",function(){
+            var name = $("#name").val();
+            $.post("/user/changeChineseToPinyin",{name:name},function(obj){
+                $("#loginname").val(obj.value);
+            })
+        });
+        //打开分配角色的弹出层
+        function selectUserRole(data){
+            mainIndex=layer.open({
+                type:1,
+                title:'分配【'+data.name+'】的角色',
+                content:$("#selectUserRoleView"),
+                area:['800px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                btn: ['确认分配'],
+                yes:function(index, layero){
+                    var checkStatus = table.checkStatus('roleTable'); //roleTable 即为基础参数 id 对应的值
+                    var checkData=checkStatus.data;
+                    var params="id="+data.id;
+                    $.each(checkData,function(index,item){
+                        params+="&ids="+item.id;
+                    });
+                    $.post("/user/saveUserRole",params,function(obj){
+                        layer.msg(obj.msg);
+                        layer.close(index);
+                    })
+                    return false;
+                },
+                btnAlign: 'c',
+                success:function(layero, index){
+                    initRoleData(data);
+                }
+            });
+        };
+        var roleTableIns;
+        function initRoleData(data){
+            roleTableIns=table.render({
+                elem: '#roleTable'
+                ,url:'/user/loadUserRole?available=1&id='+data.id
+                ,cellMinWidth:60
+                ,cols: [ [
+                    {type:'checkbox',align:'center'}
+                    ,{field:'id',  title: 'ID',align:'center'}
+                    ,{field:'name',  title: '角色名称',align:'center'}
+                    ,{field:'remark', title: '角色备注',align:'center'}
+                ] ]
+            });
+        }
+    });
+    //刷新的方法
+    function reloadTable(id){
+        tableIns.reload({
+            url:'/user/loadAllUser?deptid='+id,
+            page:{
+                curr:1
+            }
+        })
+    }
+</script>
 </body>
 </html>
-<script type="text/html" id="barDemo">
-    <a href="javascript:editUser('{{d.userId}}');" class="layui-btn layui-btn-mini layui-btn-danger merchant-freeze">编辑</a>
-    <a href="javascript:delUser('{{d.userId}}');" class="layui-btn layui-btn-mini layui-btn-danger merchant-freeze">删除</a>
-</script>
-<script>
-    function editUser(userId){
-        layui.use('layer',function () {
-            layer.open({
-                type: 2,
-                title: '信息修改',
-                shadeClose: true,
-                shade: 0.8,
-                area: ['420px', '520px'],
-                content: 'editUser.html?userId='+userId
-            });
-        });
-    }
-
-
-    $('#add').click(function () {
-        layui.use('layer',function () {
-            layer.open({
-                type: 2,
-                title: '员工添加',
-                shadeClose: true,
-                shade: 0.8,
-                area: ['420px', '520px'],
-                content: 'addUser.html'
-            });
-        });
-    })
-
-    $("#find").click(function () {
-        console.log("find");
-        find();
-    })
-
-
-    $("#reset").click(function () {
-        reload();
-    })
-
-    function delUser(userId){
-        $.ajax({
-            type: "POST",
-            url: directory+"user/delUser",
-            async:false,
-            data: {
-            },
-            success: function(res) {
-                layer.msg(res.msg)
-            }
-        })
-    }
-
-    function find(){
-        var depId = $('#dep').val();
-        var userName = $('#userName').val();
-        layui.table.reload('info',{
-            where: {
-                depId:depId,
-                userName:userName
-            }});
-    }
-
-
-    function reload(){
-        layui.table.reload('info',{
-            where: {
-
-            }});
-    }
-
-    layui.use('form', function() {
-        var form = layui.form;
-        $.ajax({
-            type: "POST",
-            url: dev+"user/loadAllUser",
-            async:false,
-            data: {
-            },
-            success: function(res) {
-                var data = res.data;
-                $.each(data,function(index,item){
-                    $("#dep")
-                        .append(
-                            "<option value='" + item.depId+"'>"
-                            + item.depName + "</option>");
-                })
-                //form.render(null, 'merchant');
-                form.render();
-            }
-        })
-    })
-
-    layui.use('table', function(){
-        var tableWidth = $("#info").width() - 28;
-        var table = layui.table;
-        table.render({
-            type: "POST",
-            id:'info',
-            elem: '#barDemo'
-            ,url:dev + 'ScientificUser/loadAllUser'
-            ,request: {
-                page: 'currentPage'
-                ,limit: 'pageSize'
-            },
-            response: {
-                statusName: 'code'
-                ,statusCode: 0
-                ,msgName: 'msg'
-                ,countName: 'count'
-                ,dataName: 'data'
-            }
-            ,cols: [[
-                {field:'userId', width: tableWidth*0.1, title: '用户id' },
-                {field:'userName', width: tableWidth*0.1, title: '用户名' },
-                {field:'email', width:tableWidth*0.15, title: '邮箱'},
-                {field:'depName', width:tableWidth*0.1, title: '部门名字'},
-                {field:'createName', width:tableWidth*0.1, title: '创建人'},
-                {field:'password', width:tableWidth*0.1, title: '密码'},
-                {field:'roleId', title: '角色', width: tableWidth*0.1 }, //minWidth：局部定义当前单元格的最小宽度
-                {field:'phone', title: '手机号',width: tableWidth*0.1},
-                {field:'createTime', title: '创建时间', width: tableWidth*0.15}
-            ]]
-            ,page: true
-        });
-    });
-</script>
