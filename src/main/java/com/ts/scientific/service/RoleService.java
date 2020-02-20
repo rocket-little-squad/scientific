@@ -2,6 +2,7 @@ package com.ts.scientific.service;
 
 import com.ts.scientific.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ts.scientific.vo.RoleVo;
 
 /**
  * <p>
@@ -12,5 +13,28 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-02-16
  */
 public interface RoleService extends IService<Role> {
+
+    /**
+     * 查询所有角色
+     */
+    Object queryAllRole(RoleVo roleVo);
+
+    /**
+     * 添加角色
+     */
+    Object insertSelective(Role record);
+
+    /**
+     * 删除角色
+     */
+    Object deleteByPrimaryKey(Integer id);
+
+    /**
+     * 修改角色
+     * @return
+     */
+    Object updateByPrimaryKeySelective(RoleVo roleVo);
+
+
 
 }

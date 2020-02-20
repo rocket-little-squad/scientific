@@ -12,7 +12,7 @@
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" href="favicon.ico">
     <link rel="stylesheet" href="../layui/css/layui.css" media="all" />
-    <link rel="stylesheet" href="../config/config.js" media="all" />
+    <script src="../config/config.js"></script>
     <link rel="stylesheet" href="../layui/layui.all.js" media="all" />
     <link rel="stylesheet" href="../js/jquery-3.4.1.js" media="all" />
     <link rel="stylesheet" href="../layui_ext/dtree/dtree.css" media="all" />
@@ -135,14 +135,13 @@
         var form=layui.form;
         var $=layui.jquery;
         var layer=layui.layer;
-        var dtree = layui.dtree;
         var laydate = layui.laydate;
         laydate.render({
             elem:"#hiredate"
         });
         tableIns=table.render({
             elem: '#userTable'
-            ,url: '/scientific/ScientificUser/loadAllUser'
+            ,url: dev+'ScientificUser/loadAllUser'
             ,toolbar: '#userToolbar'
             ,page:true
             ,height:'full-130'
@@ -163,7 +162,7 @@
                 var brforeCurr = curr; // 获得当前页码
                 var dataLength = res.data.length; // 获得当前页的记录数
                 var count = res.count; // 获得总记录数
-                if(dataLength == 0 && count != 0){ //如果当前页的记录数为0并且总记录数不为0
+                if(dataLength === 0 && count !== 0){ //如果当前页的记录数为0并且总记录数不为0
                     table.reload("userTable",{ // 刷新表格到上一页
                         page:{
                             curr:brforeCurr-1
@@ -176,7 +175,7 @@
         $("#doSearch").click(function(){
             var params=$("#searchFrm").serialize();
             tableIns.reload({
-                url:'/scientific/ScientificUser/loadAllUser?'+params
+                url:dev+'ScientificUser/loadAllUser?'+params
             })
         });
         //监听头工具行的事件
@@ -222,65 +221,11 @@
                     // $.get("/user/loadUserMaxOrderNum",function(obj){
                     //     $("#ordernum").val(obj.value);
                     // });
-                    url="/scientific/ScientificUser/addUser";
+                    url=dev+"ScientificUser/addUser";
                 }
             })
         };
-        /*//初始化所属部门里面的下拉树
-        var accordionUserTree = dtree.render({
-            elem: "#accordionDeptTree",
-            url: "/user/loadUserTreeJson",
-            dataStyle: "layuiStyle",  //使用layui风格的数据格式
-            dataFormat: "list",  //配置data的风格为list
-            response:{message:"msg",statusCode:0}, //修改response中返回数据的定义
-            accordion:true
-        });
-        //弹出层里面的下拉树加事件
-        $("#selDeptid").on("click",function(){
-            $(this).toggleClass("layui-form-selected");
-            $("#accordionDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
-        });
-        dtree.on("node(accordionDeptTree)", function(obj){
-            $("#name_deptid").val(obj.param.context);
-            $("#deptid").val(obj.param.nodeId);
-            $("#selDeptid").toggleClass("layui-form-selected");
-            $("#accordionDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
-        });
-        //初始化领导部门里面的下拉树
-        var accordionUserTree = dtree.render({
-            elem: "#accordionLeaderDeptTree",
-            url: "/user/loadUserTreeJson",
-            dataStyle: "layuiStyle",  //使用layui风格的数据格式
-            dataFormat: "list",  //配置data的风格为list
-            response:{message:"msg",statusCode:0}, //修改response中返回数据的定义
-            accordion:true
-        });
-        //弹出层里面的下拉树加事件
-        $("#selLeaderDeptid").on("click",function(){
-            $(this).toggleClass("layui-form-selected");
-            $("#accordionLeaderDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
-        });
-        dtree.on("node(accordionLeaderDeptTree)", function(obj){
-            $("#name_leaderDeptid").val(obj.param.context);
-            $("#selLeaderDeptid").toggleClass("layui-form-selected");
-            $("#accordionLeaderDeptid").toggleClass("layui-show layui-anim layui-anim-upbit");
-            var leaderDeptid = obj.param.nodeId;
-            initLeaderSelect(leaderDeptid);
-        });
-        function initLeaderSelect(leaderDeptid,selectedId){
-            $.post("/user/loadUserByDeptid",{deptid:leaderDeptid},function(obj){
-                var html='<option value="">请选择领导名称</option>';
-                $.each(obj,function(index,item){
-                    html+='<option value='+item.id+'>'+item.name+'</option>';
-                });
-                $("#mgr").html(html);
-                if(selectedId!=undefined){
-                    $("#mgr").val(selectedId);
-                }
-                //更新表单的渲染
-                form.render("select");
-            });
-        }*/
+
         //提交事件
         form.on('submit(doSubmit)',function(data){
             var params=$("#dataFrm").serialize();
@@ -292,8 +237,6 @@
                 tableIns.reload();
                 //刷新左边的树
                 window.parent.left.userTree.reload();
-                //刷新下拉列表的树
-                accordionUserTree.reload();
             })
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
@@ -310,32 +253,16 @@
                     //移除下拉列表展开的样式
                     $("#accordionDeptid").removeClass("layui-show layui-anim layui-anim-upbit");
                     form.val("dataFrm",data);
-                    ///判断是否是否根节，如果是节点 禁用下拉
-                  /*  unSelectDeptTree(data);//反选树
-                    unSelectLeaderDeptTree(data);//反选树*/
-                    url="/scientific/ScientificUser/updateUser";
+                    url=dev+"ScientificUser/updateUser";
                 }
             });
         };
-        //反选树
-        function unSelectDeptTree(data){
-            var params = dtree.dataInit("accordionDeptTree", data.deptid);
-            $("#name_deptid").val(params.context);
-        };
-        //反选树
-        function unSelectLeaderDeptTree(data){
-            var leaderid = data.mgr;//领导id
-            $.get("/user/queryUserById",{id:leaderid},function(obj){
-                var params = dtree.dataInit("accordionLeaderDeptTree", obj.deptid);
-                $("#name_leaderDeptid").val(params.context);
-                initLeaderSelect(obj.deptid,obj.id);
-            });
-        };
+
         //删除用户
         function  deleteUserById(data){
             layer.confirm('真的要删除【'+data.userName+'】这个用户么？', function(index){
                 //向服务端发送删除指令
-                $.get("/scientific/ScientificUser/deleteUser",{userId:data.userId},function(reslult){
+                $.get(dev+"ScientificUser/deleteUser",{userId:data.userId},function(reslult){
                     layer.msg(reslult.msg);
                     layer.close(index);
                     //刷新数据表格
@@ -397,7 +324,7 @@
     //刷新的方法
     function reloadTable(id){
         tableIns.reload({
-            url:'/user/loadAllUser?deptid='+id,
+            url:dev+'loadAllUser?deptid='+id,
             page:{
                 curr:1
             }

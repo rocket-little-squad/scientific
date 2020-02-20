@@ -1,23 +1,24 @@
 package com.ts.scientific.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.config.BizException;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.UserMapper;
-import com.ts.scientific.util.RepResult;
-import com.ts.scientific.vo.UserVo;
 import com.ts.scientific.service.UserService;
+import com.ts.scientific.util.RepResult;
+import com.ts.scientific.util.WebUtils;
+import com.ts.scientific.vo.UserVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * <p>
@@ -62,10 +63,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (null == record) {
             throw new BizException("添加数据为空");
         }
+        record.setCreateName(WebUtils.getCurrentUserName());
+        record.setPassword("123456");
+        record.setCreateTime(LocalDate.now());
         if (1 != userMapper.insert(record)) {
             throw new BizException("添加用户数据失败");
         }
-        return RepResult.repResult(0, "添加成功", new Object());
+        return RepResult.repResult(0, "添加成功", null);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (1 != userMapper.updateById(record)) {
             throw new BizException("修改用户数据失败");
         }
-        return RepResult.repResult(0, "修改成功", new Object());
+        return RepResult.repResult(0, "修改成功", null);
     }
 
     @Override
@@ -92,6 +96,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (1 != userMapper.deleteById(id)) {
             throw new BizException("删除用户数据失败");
         }
-        return RepResult.repResult(0, "删除成功", new Object());
+        return RepResult.repResult(0, "删除成功", null);
     }
 }
