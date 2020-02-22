@@ -25,6 +25,13 @@ public interface AuthService extends IService<Auth> {
     Object queryAllAuth(AuthVo authVo);
 
     /**
+     * 加载角色拥有所有权限
+     * @param id
+     * @return
+     */
+    Object loadRoleAuth(String id);
+
+    /**
      * 添加权限
      */
     Object insertSelective(Auth record);

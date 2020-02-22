@@ -60,10 +60,12 @@
 <div style="display: none;padding: 10px" id="addOrUpdateView">
     <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm" >
         <div class="layui-form-item">
-            <input type="hidden" name="roleId">
-            <label class="layui-form-label">角色名称</label>
-            <div class="layui-input-block">
-                <input type="text" name="roleName"  autocomplete="off" placeholder="请输入角色名称" class="layui-input">
+            <div class="layui-inline">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="roleId">
+                    <input type="text" name="roleName"  autocomplete="off" placeholder="请输入角色名称" class="layui-input">
+                </div>
             </div>
         </div>
         <div class="layui-form-item">
@@ -76,8 +78,8 @@
 </div>
 
 <!-- 分配权限的弹出层开始 -->
-<div style="display: none; padding: 10px" id="selectPermissionView">
-    <div class="dtree" id="permissionTree"  data-id="0"></div>
+<div id="selectRoleAuthView" style="display: none;">
+    <table class="layui-hide" id="authTable" lay-filter="authTable"></table>
 </div>
 <!-- 分配权限的弹出层结束-->
 
@@ -109,7 +111,6 @@
                 {field:'roleId',  title: 'ID',align:'center'}
                 ,{field:'roleName',  title: '角色名称',align:'center'}
                 ,{field:'createName', title: '创建人',align:'center'}
-                ,{field:'authId', title: '权限编号',align:'center'}
                 ,{field:'createTime', title: '创建时间',align:'center'}
                 ,{fixed: 'right', title:'操作',align:'center', toolbar: '#roleBar', width:300}
             ] ]
@@ -150,7 +151,7 @@
             } else if(layEvent === 'edit'){ //编辑
                 openUpdateRoleView(data);
             }else if(layEvent === 'selectPermission'){//分配权限
-                openSelectPermission(data);
+                selectRoleAuth(data);
             }
         });
         var mainIndex;
@@ -160,7 +161,7 @@
                 type:1,
                 title:'添加角色',
                 content:$("#addOrUpdateView"),
-                area:['800px','400px'],
+                area:['400px','200px'],
                 skin:'layui-layer-molv',
                 maxmin:true,
                 success:function(layero, index){
@@ -190,7 +191,7 @@
                 type:1,
                 title:'修改角色',
                 content:$("#addOrUpdateView"),
-                area:['800px','400px'],
+                area:['400px','200px'],
                 skin:'layui-layer-molv',
                 maxmin:true,
                 success:function(layero, index){
@@ -211,44 +212,47 @@
                 })
             });
         }
-        //分配角色权限
-        function openSelectPermission(data){
-            var menuTree;
+        //打开分配权限的弹出层
+        function selectRoleAuth(data){
             mainIndex=layer.open({
                 type:1,
-                title:'分配【'+data.name+'】的权限',
-                content:$("#selectPermissionView"),
-                area:['400px','500px'],
+                title:'分配【'+data.roleName+'】的权限',
+                content:$("#selectRoleAuthView"),
+                area:['800px','400px'],
                 skin:'layui-layer-molv',
+                maxmin:true,
                 btn: ['确认分配'],
                 yes:function(index, layero){
-                    //得到角色ID
-                    var roleId=data.id;
-                    //得到选中的节点集合
-                    var nodes = dtree.getCheckbarNodesParam("permissionTree");
-                    var params="id="+roleId;
-                    $.each(nodes,function(index,item){
-                        params+="&ids="+item.nodeId;
-                    })
-                    //保存角色和权限的关系
-                    $.post("/role/saveRolePermission",params,function(obj){
+                    var checkStatus = table.checkStatus('authTable'); //authTable 即为基础参数 id 对应的值
+                    var checkData=checkStatus.data;
+                    var params="roleId="+data.roleId;
+                    $.each(checkData,function(index,item){
+                        params+="&ids="+item.authId;
+                    });
+                    $.post(dev+"ScientificUser/saveRoleAuth",params,function(obj){
                         layer.msg(obj.msg);
+                        layer.close(index);
                     })
                     return false;
                 },
                 btnAlign: 'c',
-                maxmin:true,
                 success:function(layero, index){
-                    menuTree=dtree.render({
-                        elem: "#permissionTree",
-                        url: "/role/loadSelectPermission?id="+data.id,
-                        dataStyle: "layuiStyle",  //使用layui风格的数据格式
-                        dataFormat: "list",  //配置data的风格为list
-                        checkbar: true,
-                        checkbarType: "all",
-                        response:{message:"msg",statusCode:0} //修改response中返回数据的定义
-                    });
+                    initRoleData(data);
                 }
+            });
+        };
+        var roleTableIns;
+        function initRoleData(data){
+            roleTableIns=table.render({
+                elem: '#authTable'
+                ,url:dev+'ScientificUser/loadRoleAuth?id='+data.roleId
+                ,cellMinWidth:60
+                ,cols: [ [
+                    {type:'checkbox',align:'center'}
+                    ,{field:'authId',  title: 'ID',align:'center'}
+                    ,{field:'authName',  title: '权限名称',align:'center'}
+                    ,{field:'authCode', title: '权限编码',align:'center'}
+                ] ]
             });
         }
     });

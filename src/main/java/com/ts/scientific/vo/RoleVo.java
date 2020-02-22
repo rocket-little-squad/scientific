@@ -15,4 +15,6 @@ public class RoleVo extends Role implements Serializable {
     private Integer page = 1;
     private Integer limit = 10;
 
+    private Integer[] ids;
+
 }

@@ -1,12 +1,15 @@
 package com.ts.scientific.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.Auth;
+import com.ts.scientific.entity.Centre;
 import com.ts.scientific.entity.Role;
 import com.ts.scientific.mapper.AuthMapper;
+import com.ts.scientific.mapper.CentreMapper;
 import com.ts.scientific.mapper.RoleMapper;
 import com.ts.scientific.service.AuthService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +21,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -34,6 +40,9 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
     @Resource
     private AuthMapper authMapper;
 
+    @Resource
+    private CentreMapper centreMapper;
+
     @Override
     public Object queryAllAuth(AuthVo authVo) {
         LambdaQueryWrapper<Auth> queryWrapper = new LambdaQueryWrapper<Auth>()
@@ -41,6 +50,31 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
         Page<Auth> authPage = authMapper.selectPage(new Page<>(authVo.getPage(), authVo.getLimit()), queryWrapper);
         List<Auth> auths = authPage.getRecords();
         return RepResult.repResult(0, "查询成功", auths, (int) authPage.getTotal());
+    }
+
+    @Override
+    public Object loadRoleAuth(String id){
+
+        List<Auth> auths = authMapper.selectList(new QueryWrapper<Auth>());
+
+        List<Centre> authId = centreMapper.selectList(new QueryWrapper<Centre>().eq("role_id", id));
+        List<Map<String,Object>> list = new ArrayList<>();
+        for (Auth r1 : auths) {
+            Boolean LAY_CHECKED=false;
+            for (Centre r2 : authId) {
+                if(r1.getAuthId()==r2.getAuthId()) {
+                    LAY_CHECKED=true;
+                    break;
+                }
+            }
+            Map<String,Object> map=new HashMap<>();
+            map.put("authId", r1.getAuthId());
+            map.put("authName", r1.getAuthName());
+            map.put("authCode", r1.getAuthCode());
+            map.put("LAY_CHECKED", LAY_CHECKED);
+            list.add(map);
+        }
+        return RepResult.repResult(0, "查询成功", list);
     }
 
     @Override

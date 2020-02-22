@@ -35,6 +35,13 @@ public interface RoleService extends IService<Role> {
      */
     Object updateByPrimaryKeySelective(RoleVo roleVo);
 
+    /**
+     * 保存角色与权限之间的关系
+     * @param roleVo
+     * @return
+     */
+    Object saveRoleAuth(RoleVo roleVo);
+
 
 
 }
