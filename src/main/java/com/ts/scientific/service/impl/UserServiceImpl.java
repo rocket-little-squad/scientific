@@ -2,6 +2,7 @@ package com.ts.scientific.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,6 +35,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private UserMapper userMapper;
 
+
     @Override
     public Object login(String email, String password, HttpServletRequest request) {
         User user = userMapper.selectOne(new QueryWrapper<User>().lambda()
@@ -49,12 +51,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Object queryAllUser(UserVo userVo) {
+        System.out.println(userVo.getLimit()+"....."+userVo.getPage());
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
                 .eq(StringUtils.isNotBlank(userVo.getPhone()), User::getPhone, userVo.getPhone())
                 .eq(StringUtils.isNotBlank(userVo.getUserName()), User::getUserName, userVo.getUserName());
-        Page<User> userPage = userMapper.selectPage(new Page<>(userVo.getPage(), userVo.getLimit()), queryWrapper);
+        IPage<User> iPage = new Page<>();
+        iPage.setCurrent(userVo.getPage());
+        iPage.setSize(userVo.getLimit());
+        IPage<User> userPage = userMapper.selectPage(iPage, queryWrapper);
         List<User> users = userPage.getRecords();
-        return RepResult.repResult(0, "查询成功", users, (int) userPage.getTotal());
+        return RepResult.repResult(0, "查询成功", users, (int)userPage.getTotal());
     }
 
     @Override

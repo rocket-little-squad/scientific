@@ -53,15 +53,12 @@
 <div class="layui-hide" id="userBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="del">删除</a>
-    <a class="layui-btn layui-btn-xs"  lay-event="selectUserRole" >分配角色</a>
 </div>
 
 <!-- 添加和修改弹出层 -->
 <div style="display: none; padding: 10px" id="addOrUpdateView">
     <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm">
-
         <div class="layui-form-item">
-
             <div class="layui-inline">
                 <label class="layui-form-label">用户名称</label>
                 <div class="layui-input-inline">
@@ -81,6 +78,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">分配角色</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="roleId">
+                        <select name="roleId" id="roleId" lay-verify="required" lay-filter='roleId'>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="layui-form-item">
             <div class="layui-inline">
             <label class="layui-form-label">部门名称</label>
@@ -89,9 +98,8 @@
                        autocomplete="off" placeholder="请输入部门名称" class="layui-input">
             </div>
         </div>
+
         <div class="layui-form-item">
-
-
             <div class="layui-inline">
                 <label class="layui-form-label">手机号</label>
                 <div class="layui-input-inline">
@@ -100,6 +108,8 @@
                 </div>
             </div>
         </div>
+
+
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button class="layui-btn" lay-submit="" lay-filter="doSubmit">立即提交</button>
@@ -108,15 +118,6 @@
         </div>
     </form>
 </div>
-
-
-<!-- 分配角色的弹出层开始 -->
-<div id="selectUserRoleView" style="display: none;">
-    <table class="layui-hide" id="roleTable" lay-filter="roleTable"></table>
-</div>
-<!-- 分配角色的弹出层结束 -->
-
-
 
 <!-- 数据表格结束 -->
 <script type="text/javascript" src="../layui/layui.js"></script>
@@ -195,10 +196,6 @@
                 deleteUserById(data);
             } else if(layEvent === 'edit'){ //编辑
                 openUpdateUserView(data);
-            }else if(layEvent === 'updatePWD'){//重置密码
-                updatePWD(data);
-            }else if(layEvent === 'selectUserRole'){//分配权限
-                selectUserRole(data);
             }
         });
 
@@ -270,56 +267,19 @@
                 })
             });
         };
-        //用户名失去焦点事件
-        $("#name").on("blur",function(){
-            var name = $("#name").val();
-            $.post("/user/changeChineseToPinyin",{name:name},function(obj){
-                $("#loginname").val(obj.value);
-            })
-        });
-        //打开分配角色的弹出层
-        function selectUserRole(data){
-            mainIndex=layer.open({
-                type:1,
-                title:'分配【'+data.name+'】的角色',
-                content:$("#selectUserRoleView"),
-                area:['800px','400px'],
-                skin:'layui-layer-molv',
-                maxmin:true,
-                btn: ['确认分配'],
-                yes:function(index, layero){
-                    var checkStatus = table.checkStatus('roleTable'); //roleTable 即为基础参数 id 对应的值
-                    var checkData=checkStatus.data;
-                    var params="id="+data.id;
-                    $.each(checkData,function(index,item){
-                        params+="&ids="+item.id;
-                    });
-                    $.post("/user/saveUserRole",params,function(obj){
-                        layer.msg(obj.msg);
-                        layer.close(index);
-                    })
-                    return false;
-                },
-                btnAlign: 'c',
-                success:function(layero, index){
-                    initRoleData(data);
-                }
+
+        //初始化查询角色的下拉列表
+        $.get(dev+"ScientificUser/loadAllRole",function(obj){
+            obj = obj.data;
+            var providerId = $("#roleId");
+            var html="<option value=''>请选择角色</option>";
+            $.each(obj,function(index,item){
+                html+="<option value="+item.roleId+">"+item.roleName+"</option>"
             });
-        };
-        var roleTableIns;
-        function initRoleData(data){
-            roleTableIns=table.render({
-                elem: '#roleTable'
-                ,url:'/user/loadUserRole?available=1&id='+data.id
-                ,cellMinWidth:60
-                ,cols: [ [
-                    {type:'checkbox',align:'center'}
-                    ,{field:'id',  title: 'ID',align:'center'}
-                    ,{field:'name',  title: '角色名称',align:'center'}
-                    ,{field:'remark', title: '角色备注',align:'center'}
-                ] ]
-            });
-        }
+            providerId.html(html);
+            form.render("select");
+        })
+
     });
     //刷新的方法
     function reloadTable(id){

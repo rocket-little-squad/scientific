@@ -110,7 +110,6 @@
         var form = layui.form;
         var $ = layui.jquery;
         var layer = layui.layer;
-        var dtree = layui.dtree;
         tableIns = table.render({
             elem: '#authTable'
             , url: dev + 'ScientificUser/loadAllAuth'
@@ -139,7 +138,6 @@
                 }
             }
         });
-        //模糊查询
         $("#doSearch").click(function () {
             var params = $("#searchFrm").serialize();
             tableIns.reload({
