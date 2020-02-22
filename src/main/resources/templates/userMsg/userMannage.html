@@ -83,8 +83,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label">分配角色</label>
                 <div class="layui-input-inline">
-                    <input type="hidden" name="roleId">
-                        <select name="roleId" id="roleId" lay-verify="required" lay-filter='roleId'>
+                    <select name="roleId" id="roleId" lay-verify="required" lay-filter='roleId'>
                     </select>
                 </div>
             </div>
@@ -154,10 +153,10 @@
                 {field:'depName', width:140, title: '部门名字'},
                 {field:'createName', width:130, title: '创建人'},
                 {field:'password', width:100, title: '密码'},
-                {field:'roleId', title: '角色', width: 100 }, //minWidth：局部定义当前单元格的最小宽度
+                {field:'roleName', title: '角色', width: 150 }, //minWidth：局部定义当前单元格的最小宽度
                 {field:'phone', title: '手机号',width: 150},
                 {field:'createTime', title: '创建时间', width: 150},
-                {fixed: 'right', title:'操作',align:'center', toolbar: '#userBar', width:300}
+                {fixed: 'right', title:'操作',align:'center', toolbar: '#userBar', width:240}
             ] ]
             ,done:function(res, curr){
                 var brforeCurr = curr; // 获得当前页码
