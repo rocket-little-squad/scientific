@@ -1,6 +1,5 @@
 package com.ts.scientific.controller;
 
-import com.ts.scientific.service.RoleService;
 import com.ts.scientific.service.impl.AuthServiceImpl;
 import com.ts.scientific.service.impl.RoleServiceImpl;
 import com.ts.scientific.service.impl.UserServiceImpl;
@@ -9,10 +8,10 @@ import com.ts.scientific.vo.AuthVo;
 import com.ts.scientific.vo.RoleVo;
 import com.ts.scientific.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -154,7 +153,7 @@ public class ScientificUserController {
     public Object updateAuth(AuthVo authVo) {
         return authServiceImpl.updateByPrimaryKeySelective(authVo);
     }
-    
+
 
 
 
@@ -165,17 +164,17 @@ public class ScientificUserController {
      * 登录
      */
     @GetMapping("/login")
-    public Object login(String email, String password, HttpServletRequest request) {
-        return userServiceImpl.login(email, password, request);
+    public Object login(String email, String password, HttpServletRequest request){
+       return userServiceImpl.login(email,password,request);
     }
 
     /**
      * 登出
      */
     @GetMapping("/loginOut")
-    public Object loginOut(HttpServletRequest request) {
+    public Object loginOut(HttpServletRequest request){
         request.getSession().removeAttribute("user");
-        return RepResult.repResult(0, "登出", null);
+        return RepResult.repResult(0,"登出",null);
     }
 
 

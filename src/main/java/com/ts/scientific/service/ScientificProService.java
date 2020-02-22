@@ -26,7 +26,7 @@ public interface ScientificProService extends IService<ScientificPro> {
     Object addProMaterials(ScientificProPeopleInfo scientificProPeopleInfo, HttpServletRequest request);
 
     /**
-     * 项目审核
+     * 项目材料状态更新
      */
-
+    Object updateMaterialsStatus(Integer status,Integer proPeopleId);
 }

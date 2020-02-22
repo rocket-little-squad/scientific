@@ -13,11 +13,7 @@ import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.StatisticsDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.sql.In;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,15 +61,16 @@ public class ScientificController {
          */
         @GetMapping("/getType")
         public Object getType(){
-             return scientificInfoServiceImpl.list();
+             return RepResult.repResult(0,"成功",scientificInfoServiceImpl.list());
         }
 
         /**
          * 计算条件查询
          */
+        @GetMapping("/getCalculate")
         public Object getCalculate(Integer projectTypeId){
-                return scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
-                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId));
+                return RepResult.repResult(0,"",scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
+                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId)));
         }
 
 

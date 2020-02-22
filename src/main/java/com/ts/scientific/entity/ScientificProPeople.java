@@ -1,7 +1,9 @@
 package com.ts.scientific.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
+import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-02-18
+ * @since 2020-02-22
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -22,6 +24,9 @@ import lombok.experimental.Accessors;
 public class ScientificProPeople implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @TableId(value = "pro_people_id", type = IdType.AUTO)
+    private Integer proPeopleId;
 
     /**
      * 用户id

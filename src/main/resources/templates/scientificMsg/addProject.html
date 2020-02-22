@@ -3,58 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="../../lib/js/layui/css/layui.css"  media="all">
-    <script src="../../lib/js/layui/layui.js" type="text/javascript"></script>
-    <script src="../../lib/js/jquery-3.4.0.min.js" type="text/javascript"></script>
-    <script src="../../lib/js/common.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
 </head>
 <body>
-<form class="layui-form" enctype="multipart/form-data">
-    <input type="hidden" id="reportBookId"/>
-    <input type="hidden" id="isUpdate">
-    <div class="layui-form-item">
-        <label class="layui-form-label">项目类别:</label>
-        <div class="layui-input-inline">
-            <input type="text" id="proType"  required   autocomplete="off"   placeholder="请输入项目类别" class="layui-input">
+<form class="layui-form">
+    <div class="layui-form-item" >
+        <label class="layui-form-label" >项目类别:</label>
+        <div  class="layui-input-block" style="width: 300px">
+            <select  lay-filter="type" id="proType" required>
+                <option value=""></option>
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">项目背景:</label>
+        <label class="layui-form-label">计算条件:</label>
+        <div  class="layui-input-block" style="width: 300px">
+            <select id="proCondition" required>
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">计算标准:</label>
         <div class="layui-input-inline">
-            <input type="text" id="proBackground" required     autocomplete="off"  placeholder="请输入项目背景" class="layui-input">
+            <input type="text" id="proScore" required  placeholder="计算标准" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">项目目标描述:</label>
-        <div class="layui-input-block">
-            <textarea name="desc" id="proDescribe" required placeholder="请输入项目目标描述" class="layui-textarea"></textarea>
-        </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">技术可行性分析:</label>
-        <div class="layui-input-block">
-            <textarea name="desc" id="proFeasibility" required placeholder="请输入技术可行性分析" class="layui-textarea"></textarea>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">申请金额:</label>
+        <label class="layui-form-label">项目开始时间:</label>
         <div class="layui-input-inline">
-            <input type="text" id="proMoney" required  placeholder="请输入项目申请金额" class="layui-input">
+            <input type="text" id="proTimeStart" required     autocomplete="off"  placeholder="请输入项目开始时间" class="layui-input">
         </div>
     </div>
-    <div class="layui-form-item" id="down" style="display: none">
-        <button type="button" id="downFile" style="margin-left: 200px" class="layui-btn">文件下载</button>
-    </div>
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">风险分析:</label>
-        <div class="layui-input-block">
-            <textarea name="desc" id="proBenefit" required placeholder="请输入风险分析" class="layui-textarea"></textarea>
+        <label class="layui-form-label">项目结束时间:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="proTimeEnd" required     autocomplete="off"  placeholder="请输入项目结束时间" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <button type="button" name="file" style="margin-left: 100px" class="layui-btn" id="address">
-            <i class="layui-icon">&#xe67c;</i>上传报告书
-        </button>
+        <label class="layui-form-label">计算标准:</label>
+        <div class="layui-input-inline">
+            <input type="text" id="proScore" required  placeholder="计算标准" class="layui-input">
+        </div>
     </div>
     <div class="layui-form-item" >
         <button id="confirm"  type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">确认</button>
@@ -67,36 +61,93 @@
     $(function () {
 
     })
-
-    $("#downFile").click(function () {
-        down( $('#reportBookId').val());
-    })
-
-    function down(path){
-        window.location.href = directory + "pro/downPlanOrReport?reportBookId="+path+"&per=report"
-    }
-    $('#confirm').click(function () {
-            return true;
-    })
-
-    layui.use('form', function() {
+    layui.use('form', function () {
+        debugger
         var form = layui.form;
         $.ajax({
-            type: "POST",
-            url: dev+"user/dep",
-            async:false,
-            data: {
-            },
-            success: function(res) {
+            type: "get",
+            url: dev + "scientific/getType",
+            async: false,
+            data: {},
+            success: function (res) {
                 var data = res.data;
-                $.each(data,function(index,item){
-                    $("#dep")
+                console.log(data)
+                $.each(data, function (index, item) {
+                    $("#proType")
                         .append(
-                            "<option value='" + item.depId+"'>"
-                            + item.depName + "</option>");
+                            "<option value='" + item.projectTypeId + "'>"
+                            + item.projectTypeName + "</option>");
                 })
                 //form.render(null, 'merchant');
                 form.render();
             }
         })
+    })
+    $("#people").click(function () {
+        layui.use('layer',function () {
+            layer.open({
+                type: 2,
+                title: '项目人员',
+                shadeClose: true,
+                shade: false,
+                maxmin: false, //开启最大化最小化按钮
+                area: ['100%','100%'],
+                anim: 2,
+                content: 'addProPeople.html'
+            });
+            form.on('select(from)', function(data){
+                console.log(data.value); //得到被选中的值
+            });
+        })
+    })
+
+
+
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#proTimeStart'
+            ,calendar: true
+            ,showBottom: false
+        });
+    });
+
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#proTimeEnd'
+            ,calendar: true
+            ,showBottom: false
+        });
+    });
+
+
+    $('#confirm').click(function () {
+        var proType = $("#proType").val();
+        var proCondition = $("#proCondition").val();
+       // var proScore = $("#proScore").val();
+        var proTimeStart = $("#proTimeStart").val();
+        var proTimeEnd = $("#proTimeEnd").val();
+        var proPeopleList = '';
+        $.ajax({
+            type: "POST",
+            url: dev+"scientific/addPro",
+            async:false,
+            data: {
+                projectTypeId:proType,
+                calculateId:proCondition,
+                startTime:proTimeStart,
+                endTime:proTimeEnd,
+            },
+            success: function(res) {
+                if (res.code==0){
+                    layer.msg(res.msg)
+                }else {
+                    layer.msg(res.msg)
+                }
+            }
+        })
+    })
+
+
 </script>

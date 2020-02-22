@@ -79,6 +79,7 @@
                                 // $.cookie('userName',res.data.userName);
                                 sessionStorage.setItem("userName",res.data.userName)
                                 sessionStorage.setItem("userId",res.data.userId);
+                                sessionStorage.setItem("roleId",res.data.roleId);
                                 window.location.href="main.html"
                             }else {
                                 layer.msg(res.msg)

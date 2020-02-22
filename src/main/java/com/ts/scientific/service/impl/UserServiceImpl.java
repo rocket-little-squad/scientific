@@ -113,4 +113,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return RepResult.repResult(0, "删除成功", null);
     }
+
+    @Override
+    public Object getAllUser(IPage<User> page) {
+       int count = userMapper.selectCount(new QueryWrapper<>());
+       List<User> users = userMapper.selectPage(page,new QueryWrapper<>()).getRecords();
+        return RepResult.repResult(0,"成功",users,count);
+    }
 }

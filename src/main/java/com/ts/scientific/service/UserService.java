@@ -1,5 +1,6 @@
 package com.ts.scientific.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ts.scientific.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ts.scientific.mapper.UserMapper;
@@ -54,4 +55,9 @@ public interface UserService extends IService<User> {
      * @return
      */
     Object deleteByPrimaryKey(String id);
+
+    /**
+     * 获取所有的用户
+     */
+    Object getAllUser(IPage<User> page);
 }

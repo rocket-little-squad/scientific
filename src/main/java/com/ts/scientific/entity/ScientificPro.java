@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-02-18
+ * @since 2020-02-22
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,6 +40,15 @@ public class ScientificPro implements Serializable {
      * 项目状态 1:项目建立 2:项目进行中 3:项目完成 4:审核不通过 5:项目超时
      */
     private Integer proStatus;
+
+    private LocalDate createTiem;
+
+    private Integer createId;
+
+    /**
+     * 项目编号
+     */
+    private String proNo;
 
 
 }

@@ -1,16 +1,16 @@
 package com.ts.scientific.mapper;
 
-import com.ts.scientific.entity.User;
+import com.ts.scientific.entity.Centre;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- * 用户表 Mapper 接口
+ *  Mapper 接口
  * </p>
  *
  * @author 
  * @since 2020-02-22
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface CentreMapper extends BaseMapper<Centre> {
 
 }

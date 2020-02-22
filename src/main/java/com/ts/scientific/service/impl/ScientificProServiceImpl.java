@@ -1,5 +1,6 @@
 package com.ts.scientific.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.entity.ScientificPro;
 import com.ts.scientific.entity.ScientificProPeople;
@@ -63,6 +64,14 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         scientificProPeopleInfo.setUserId(user.getUserId());
         scientificProPeopleInfoMapper.insert(scientificProPeopleInfo);
         return RepResult.repResult(0,"上报成功",null);
+    }
+
+    @Override
+    public Object updateMaterialsStatus(Integer status, Integer proPeopleId) {
+        ScientificProPeople scientificProPeople = new ScientificProPeople();
+        scientificProPeople.setMaterialsStatus(status);
+        return scientificProPeopleMapper.update(scientificProPeople,new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getProPeopleId,proPeopleId));
     }
 
     /**
