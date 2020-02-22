@@ -1,7 +1,8 @@
 package com.ts.scientific.service;
 
-import com.ts.scientific.entity.ScientificInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ts.scientific.entity.ScientificInfo;
+import com.ts.scientific.vo.ScientificInfoVo;
 
 /**
  * <p>
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-02-16
  */
 public interface ScientificInfoService extends IService<ScientificInfo> {
+
+    Object queryAllScientificInfo(ScientificInfoVo scientificInfoVo);
 
 }

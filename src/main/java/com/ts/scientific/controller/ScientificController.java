@@ -10,7 +10,9 @@ import com.ts.scientific.service.impl.ScientificInfoServiceImpl;
 import com.ts.scientific.service.impl.StatisticsDetailServiceImpl;
 import com.ts.scientific.util.PageUtil;
 import com.ts.scientific.util.RepResult;
+import com.ts.scientific.vo.ScientificInfoVo;
 import com.ts.scientific.vo.StatisticsDetailVO;
+import com.ts.scientific.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author 
+ * @author
  * @since 2020-02-16
  */
 @RestController
@@ -72,6 +74,49 @@ public class ScientificController {
                 return RepResult.repResult(0,"",scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
                         .eq(ScientificInfoConf::getProjectTypeId,projectTypeId)));
         }
+
+
+        //===========科研信息开始===============
+
+        /**
+         * 加载科研信息列表数据
+         */
+        @GetMapping("/loadAllScientificInfo")
+        public Object loadAllScientificInfo(ScientificInfoVo scientificInfoVo) {
+                return scientificInfoServiceImpl.queryAllScientificInfo(scientificInfoVo);
+        }
+
+
+       /* *//**
+         * 添加科研信息
+         *
+         * @param scientificInfoVo
+         * @return
+         *//*
+        @GetMapping("/addScientificInfo")
+        public Object addScientificInfo(ScientificInfoVo scientificInfoVo) {
+                return scientificInfoServiceImpl.insertSelective(scientificInfoVo);
+        }
+
+        *//**
+         * 修改科研信息
+         *
+         * @param scientificInfoVo
+         * @return
+         *//*
+        @GetMapping("/updateScientificInfo")
+        public Object updateScientificInfo(ScientificInfoVo scientificInfoVo) {
+                return scientificInfoServiceImpl.updateByPrimaryKeySelective(scientificInfoVo);
+        }
+
+        *//**
+         * 删除科研信息
+         *//*
+        @GetMapping("/deleteScientificInfo")
+        public Object deleteScientificInfo(String scientificInfoId) {
+                return scientificInfoServiceImpl.deleteByPrimaryKey(scientificInfoId);
+        }*/
+        //===========科研信息结束===============
 
 
 }
