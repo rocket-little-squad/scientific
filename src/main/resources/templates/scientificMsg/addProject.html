@@ -203,7 +203,11 @@
             contentType: 'application/json',
             success: function(res) {
                 if (res.code==0){
-                    layer.msg(res.msg)
+                    //layer.msg(res.msg)
+                    var index=parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    parent.layer.msg(res.msg);
+                   // parent.reload();
                 }else {
                     layer.msg(res.msg)
                 }

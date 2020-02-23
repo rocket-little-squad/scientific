@@ -41,7 +41,7 @@ public class ScientificPro implements Serializable {
      */
     private Integer proStatus;
 
-    private LocalDate createTiem;
+    private LocalDate createTime;
 
     private Integer createId;
 

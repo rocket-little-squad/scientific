@@ -42,6 +42,8 @@ public class ScientificController {
 
         @Autowired
         private ScientificProServiceImpl scientificProServiceImpl;
+
+
         /**
          * 科研绩效查询
          */
@@ -85,9 +87,7 @@ public class ScientificController {
          */
         @GetMapping("/getCalculate")
         public Object getCalculate(Integer projectTypeId){
-//                return RepResult.repResult(0,"",scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
-//                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId)));
-                return null;
+                return scientificInfoConfServiceImpl.getCalculateIds(projectTypeId);
         }
 
 

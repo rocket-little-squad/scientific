@@ -44,5 +44,10 @@ public class ScientificInfo implements Serializable {
 
     private String createName;
 
+    /**
+     * 0 否 1 是
+     */
+    private Integer delFlag;
+
 
 }

@@ -37,5 +37,10 @@ public class ScientificInfoCentre implements Serializable {
      */
     private Integer calculateId;
 
+    /**
+     * 0 否 1 是
+     */
+    private Integer delFlag;
+
 
 }

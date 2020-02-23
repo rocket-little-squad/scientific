@@ -3,6 +3,7 @@ package com.ts.scientific.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ts.scientific.entity.ScientificPro;
 import com.ts.scientific.entity.ScientificProPeopleInfo;
+import com.ts.scientific.vo.FindProVO;
 import com.ts.scientific.vo.ProVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ public interface ScientificProService extends IService<ScientificPro> {
     /**
      * 获取所有项目
      */
-    Object getPro();
+    Object getPro(FindProVO findProVO, HttpServletRequest request);
 
     /**
      * 提交申报材料

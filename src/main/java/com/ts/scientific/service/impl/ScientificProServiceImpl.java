@@ -11,6 +11,7 @@ import com.ts.scientific.mapper.ScientificProPeopleInfoMapper;
 import com.ts.scientific.mapper.ScientificProPeopleMapper;
 import com.ts.scientific.service.ScientificProService;
 import com.ts.scientific.util.RepResult;
+import com.ts.scientific.vo.FindProVO;
 import com.ts.scientific.vo.ProVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,11 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         }else {
             proVO.setProStatus(2);
         }
+        proVO.setProNo(System.getSecurityManager().toString());
         this.save(scientificPro);
         List<ScientificProPeople> scientificProPeopleList = new ArrayList<>();
         ScientificProPeople proPeople  = null;
+        int i = 1;
         for (Integer userId : proVO.getUserIds()) {
             proPeople = new ScientificProPeople();
             proPeople.setProId(scientificPro.getProId());
@@ -51,15 +54,20 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             proPeople.setUserId(userId);
             proPeople.setCreateTime(now);
             proPeople.setMaterialsStatus(3);
+            proPeople.setRank(i++);
+            scientificProPeopleList.add(proPeople);
         }
-        addPeople(scientificProPeopleList,scientificProPeopleList.size());
+        if (scientificProPeopleList.size()>0) {
+            addPeople(scientificProPeopleList, scientificProPeopleList.size()-1);
+        }
         return RepResult.repResult(0,"申报成功",null);
     }
 
     @Override
-    public Object getPro() {
+    public Object getPro(FindProVO findProVO, HttpServletRequest request) {
         return null;
     }
+
 
     @Override
     public Object addProMaterials(ScientificProPeopleInfo scientificProPeopleInfo, HttpServletRequest request) {

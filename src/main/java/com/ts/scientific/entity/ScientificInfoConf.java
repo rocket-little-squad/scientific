@@ -46,5 +46,10 @@ public class ScientificInfoConf implements Serializable {
 
     private LocalDate createTime;
 
+    /**
+     * 0 否 1 是
+     */
+    private Integer delFlag;
+
 
 }

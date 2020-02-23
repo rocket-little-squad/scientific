@@ -13,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ScientificInfoConfService extends IService<ScientificInfoConf> {
 
+
+   Object getCalculateIds(Integer projectTypeId);
+
 }
