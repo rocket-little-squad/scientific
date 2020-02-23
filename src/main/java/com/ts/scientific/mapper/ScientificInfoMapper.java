@@ -1,11 +1,7 @@
 package com.ts.scientific.mapper;
 
-import com.ts.scientific.dto.ScientificInfoDto;
 import com.ts.scientific.entity.ScientificInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ts.scientific.vo.ScientificInfoVo;
-
-import java.util.List;
 
 /**
  * <p>
@@ -13,10 +9,8 @@ import java.util.List;
  * </p>
  *
  * @author 
- * @since 2020-02-22
+ * @since 2020-02-23
  */
 public interface ScientificInfoMapper extends BaseMapper<ScientificInfo> {
-
-
 
 }

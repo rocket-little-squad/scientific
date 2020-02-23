@@ -2,17 +2,21 @@ package com.ts.scientific.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.ScientificInfoConf;
+import com.ts.scientific.entity.User;
 import com.ts.scientific.service.StatisticsDetailService;
 import com.ts.scientific.service.impl.ScientificInfoConfServiceImpl;
 import com.ts.scientific.service.impl.ScientificInfoServiceImpl;
 import com.ts.scientific.service.impl.StatisticsDetailServiceImpl;
+import com.ts.scientific.service.impl.UserServiceImpl;
 import com.ts.scientific.util.PageUtil;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.ScientificInfoVo;
 import com.ts.scientific.vo.StatisticsDetailVO;
 import com.ts.scientific.vo.UserVo;
+import com.ts.scientific.vo.UserAllVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +41,9 @@ public class ScientificController {
 
         @Autowired
         private ScientificInfoServiceImpl scientificInfoServiceImpl;
+
+        @Autowired
+        private UserServiceImpl userServiceImpl;
         /**
          * 科研绩效查询
          */
@@ -56,7 +63,10 @@ public class ScientificController {
         /**
          * 科研项目添加
          */
-
+        @PostMapping("/getAllUser")
+        public Object getAllUser(@RequestBody  UserAllVO userAllVO){
+                return userServiceImpl.getAllUser(userAllVO);
+        }
 
         /**
          * 项目类别

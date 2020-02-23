@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-02-22
+ * @since 2020-02-23
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -34,11 +34,6 @@ public class Role implements Serializable {
     private LocalDate createTime;
 
     private String createName;
-
-    /**
-     * 权限角色中间id
-     */
-    private Integer centreId;
 
 
 }

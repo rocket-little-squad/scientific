@@ -15,6 +15,8 @@ import com.ts.scientific.mapper.UserMapper;
 import com.ts.scientific.service.UserService;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.util.WebUtils;
+import com.ts.scientific.vo.ProUserVO;
+import com.ts.scientific.vo.UserAllVO;
 import com.ts.scientific.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,9 +118,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Object getAllUser(IPage<User> page) {
-       int count = userMapper.selectCount(new QueryWrapper<>());
-       List<User> users = userMapper.selectPage(page,new QueryWrapper<>()).getRecords();
+    public Object getAllUser(UserAllVO userAllVO) {
+       QueryWrapper<User>  qw=  new QueryWrapper<User>();
+       if (userAllVO.getUserIds().size()>0){
+           qw.notIn("user_id",userAllVO.getUserIds());
+       }
+       int count = userMapper.selectCount(qw);
+       List<User> users = userMapper.selectPage(new Page<>(userAllVO.getCurrent(),userAllVO.getSize()),qw).getRecords();
+       List<ProUserVO> proUserVOS = new ArrayList<>();
+        for (User user : users) {
+            ProUserVO proUserVO = new ProUserVO();
+            BeanUtils.copyProperties(user,proUserVO);
+            proUserVO.setRoleName(roleMapper.selectOne(new QueryWrapper<Role>().lambda()
+                    .eq(Role::getRoleId,user.getRoleId())).getRoleName());
+        }
         return RepResult.repResult(0,"成功",users,count);
     }
 }
