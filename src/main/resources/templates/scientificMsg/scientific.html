@@ -52,11 +52,14 @@
         </div>
     </div>
 </div>
-<div id="info"></div>
+<div id="info" lay-filter="demo"></div>
 </body>
 </html>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">项目人员</a>
+</script>
 <script>
-
+    var proId;
     $('#addPro').click(function () {
         layui.use('layer',function () {
             layer.open({
@@ -101,10 +104,10 @@
         table.render({
             id:'info',
             elem: '#info'
-            ,url:dev + 'scientific/getScientificDetail'
+            ,url:dev + 'scientific/getPro'
             ,request: {
-                pageName: 'currentPage'
-                ,limitName: 'pageSize'
+                pageName: 'current'
+                ,limitName: 'size'
             },
             where:{
             },
@@ -116,12 +119,32 @@
                 ,dataName: 'data'
             }
             ,cols: [[
-                {field:'userName', width: tableWidth*0.1, title: '姓名', }
-                ,{field:'depName', width:tableWidth*0.15, title: '部门'}
-                ,{field:'score', width:tableWidth*0.1, title: '积分',}
-                ,{field:'statistic', width:tableWidth*0.1, title: '时间维度'}
+                {field:'proType', width: tableWidth*0.1, title: '项目类别', }
+                ,{field:'calculateName', width:tableWidth*0.15, title: '计算条件'}
+                ,{field:'start', width:tableWidth*0.1, title: '开始时间',}
+                ,{field:'end', width:tableWidth*0.1, title: '结束时间'}
+                ,{field:'createName', width:tableWidth*0.1, title: '创建人',}
+                ,{field:'proNo', width:tableWidth*0.1, title: '项目编号',}
+                ,{field:'proNo', width:tableWidth*0.1, title: '操作',toolbar:'#barDemo'}
             ]]
             ,page: true
+        });
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                proId = data.proId;
+                layui.use('layer',function () {
+                    layer.open({
+                        type: 2,
+                        title: '查看项目人员',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['100%', '100%'],
+                        content: 'findProPeople.html'
+                    });
+                });
+            }
         });
     });
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
+</head>
+<body>
+<div id="info" lay-filter="demo"></div>
+</body>
+</html>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="submit">提交材料</a>
+</script>
+<script>
+    layui.use('table', function(){
+        var tableWidth = $("#info").width() - 28;
+        var table = layui.table;
+        var pro = parent.proId;
+        table.render({
+            id:'info',
+            elem: '#info'
+            ,url: dev + 'scientific/getCurrentProPeople'
+            ,request: {
+                pageName: 'current'
+                ,limitName: 'size'
+            },
+            where:{
+                proId:pro
+            },
+            response: {
+                statusName: 'code'
+                ,statusCode: 0
+                ,msgName: 'msg'
+                ,countName: 'count'
+                ,dataName: 'data'
+            }
+            ,cols: [[
+                {field:'userName', width: tableWidth*0.22, title: '负责人', }
+                ,{field:'materialsStatus', width:tableWidth*0.25, title: '上报状态'}
+                ,{field:'rank', width:tableWidth*0.22, title: '负责人顺序'}
+                ,{field:'rank', width:tableWidth*0.22, title: '操作',toolbar:'#barDemo'}
+            ]]
+            ,page: true
+        });
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if (obj.event === 'submit'){
+                layui.use('layer',function () {
+                    layer.open({
+                        type: 2,
+                        title: '提交材料',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['1000px', '650px'],
+                        content: 'addProMaterials.html'
+                    });
+                })
+            }
+        });
+    });
+
+</script>

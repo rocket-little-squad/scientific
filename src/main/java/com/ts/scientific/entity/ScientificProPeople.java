@@ -48,7 +48,7 @@ public class ScientificProPeople implements Serializable {
     private Integer rank;
 
     /**
-     * 提交状态1:审核通过 2:审核不通过 3:进行中
+     * 提交状态1:审核通过 2:审核不通过 3:进行中 4:审核中
      */
     private Integer materialsStatus;
 

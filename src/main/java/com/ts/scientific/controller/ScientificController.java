@@ -1,17 +1,32 @@
 package com.ts.scientific.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ts.scientific.config.BizException;
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.ScientificInfo;
 import com.ts.scientific.entity.ScientificInfoConf;
+import com.ts.scientific.entity.ScientificProPeopleInfo;
+import com.ts.scientific.entity.User;
+import com.ts.scientific.mapper.ScientificProPeopleInfoMapper;
+import com.ts.scientific.service.StatisticsDetailService;
 import com.ts.scientific.service.impl.*;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -38,6 +53,9 @@ public class ScientificController {
         @Autowired
         private ScientificProServiceImpl scientificProServiceImpl;
 
+        @Resource
+        private ScientificProPeopleInfoMapper scientificProPeopleInfoMapper;
+
 
         /**
          * 科研绩效查询
@@ -63,10 +81,50 @@ public class ScientificController {
              return  scientificProServiceImpl.addPro(proVO,request);
         }
 
+        /**
+         * 文件上传
+         */
+        @PostMapping("/uploadFile")
+        public Object uploadFile(MultipartFile file){
+                JSONObject jsonObject = new JSONObject();
+                String path = "D:/apache-tomcat-8.5.50-file/webapps/file";
+                if (!file.isEmpty()) {
+                     String srcName =   UUID.randomUUID()+file.getOriginalFilename();
+                        File newPath = new File(path, srcName);
+                        if (!file.isEmpty()){
+                                try {
+                                        InputStream in = file.getInputStream();
+                                        FileOutputStream out = new FileOutputStream(newPath);
+                                        byte buffer[] = new byte[1024];
+                                        int len = 0;
+                                        while ((len = in.read(buffer)) > 0) {
+                                                out.write(buffer, 0, len);
+                                        }
+                                        in.close();
+                                        out.close();
+                                } catch (IOException e) {
+                                        e.printStackTrace();
+                                        throw new  BizException("失败");
+                                }
+                        }
+                        jsonObject.put("src","http://localhost:8081/file/"+srcName);
+                }
+                return RepResult.repResult(0,"",jsonObject);
+        }
 
         @PostMapping("/getAllUser")
         public Object getAllUser(@RequestBody  UserAllVO userAllVO){
                 return userServiceImpl.getAllUser(userAllVO);
+        }
+
+        /**
+         * 材料上报
+         */
+        @PostMapping("/insetMaterials")
+        public Object insetMaterials(ScientificProPeopleInfo scientificProPeopleInfo){
+                scientificProPeopleInfoMapper.update(scientificProPeopleInfo,new QueryWrapper<ScientificProPeopleInfo>().lambda()
+                .eq(ScientificProPeopleInfo::getProPeopleInfoId,scientificProPeopleInfo.getProPeopleInfoId()));
+                return RepResult.repResult(0,"上报成功",null);
         }
 
         /**
@@ -85,7 +143,19 @@ public class ScientificController {
                 return scientificInfoConfServiceImpl.getCalculateIds(projectTypeId);
         }
 
+        @GetMapping("/getPro")
+        public  Object getPro(FindProVO findProVO,HttpServletRequest request){
+                int count = scientificInfoConfServiceImpl.count();
+                return RepResult.repResult(0,"",scientificProServiceImpl.getPro(findProVO,request),count);
+        }
 
+        /**
+         * 获取当前项目人员
+         */
+        @GetMapping("/getCurrentProPeople")
+        public Object getCurrentProPeople(int current,int size,Integer proId){
+                return scientificProServiceImpl.getCurrentProPeople(current,size,proId);
+        }
         //===========科研信息开始===============
 
         /**

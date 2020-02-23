@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
+</head>
+<body>
+<textarea id="demo" style="display: none;"></textarea>
+<div style="margin-left: 500px;margin-top: 20px" class="layui-inline">
+    <button class="layui-btn" id="add" >确定上报</button>
+</div>
+</body>
+</html>
+<script>
+    layui.use('layedit', function(){
+
+        var layedit = layui.layedit;
+        layedit.set({
+            uploadImage: {
+                url: dev+'scientific/uploadFile' //接口url
+                ,type:'post'
+            }
+        });
+        layedit.build('demo', {
+            height: 500//设置编辑器高度
+        });//建立编辑器
+    });
+</script>

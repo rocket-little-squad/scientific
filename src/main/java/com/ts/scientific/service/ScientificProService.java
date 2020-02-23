@@ -22,6 +22,10 @@ public interface ScientificProService extends IService<ScientificPro> {
     Object getPro(FindProVO findProVO, HttpServletRequest request);
 
     /**
+     * 获取项目人员
+     */
+    Object getCurrentProPeople(int current,int size,Integer proId);
+    /**
      * 提交申报材料
      */
     Object addProMaterials(ScientificProPeopleInfo scientificProPeopleInfo, HttpServletRequest request);

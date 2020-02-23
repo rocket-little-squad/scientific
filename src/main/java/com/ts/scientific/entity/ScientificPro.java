@@ -1,5 +1,6 @@
 package com.ts.scientific.entity;
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
@@ -37,18 +38,20 @@ public class ScientificPro implements Serializable {
     private LocalDate endTime;
 
     /**
-     * 项目状态 1:项目建立 2:项目进行中 3:项目完成 4:审核不通过 5:项目超时
+     * 项目状态 1:进行中 2:完成 3:审核不通过 4:超时 5:已结算
      */
     private Integer proStatus;
 
     private LocalDate createTime;
 
-    private Integer createId;
+    private String createName;
 
     /**
      * 项目编号
      */
     private String proNo;
+
+    private BigDecimal score;
 
 
 }

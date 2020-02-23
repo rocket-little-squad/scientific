@@ -1,17 +1,18 @@
 package com.ts.scientific.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ts.scientific.entity.ScientificPro;
-import com.ts.scientific.entity.ScientificProPeople;
-import com.ts.scientific.entity.ScientificProPeopleInfo;
-import com.ts.scientific.entity.User;
-import com.ts.scientific.mapper.ScientificProMapper;
-import com.ts.scientific.mapper.ScientificProPeopleInfoMapper;
-import com.ts.scientific.mapper.ScientificProPeopleMapper;
+import com.mchange.lang.IntegerUtils;
+import com.ts.scientific.entity.*;
+import com.ts.scientific.mapper.*;
 import com.ts.scientific.service.ScientificProService;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.FindProVO;
+import com.ts.scientific.vo.ProPeopleVO;
+import com.ts.scientific.vo.ProSeeVO;
 import com.ts.scientific.vo.ProVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,20 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
     private ScientificProPeopleMapper scientificProPeopleMapper;
     @Autowired
     private ScientificProPeopleInfoMapper scientificProPeopleInfoMapper;
-
+    @Autowired
+    private ScientificProMapper scientificProMapper;
+    @Autowired
+    private ScientificInfoMapper scientificInfoMapper;
+    @Autowired
+    private ScientificInfoConfMapper scientificInfoConfMapper;
+    @Autowired
+    private ScientificInfoCentreMapper scientificInfoCentreMapper;
+    @Autowired
+    private UserMapper userMapper;
     @Override
     public Object addPro(ProVO proVO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         ScientificPro scientificPro = new ScientificPro();
-        BeanUtils.copyProperties(proVO,scientificPro);
         LocalDate now = LocalDate.now();
         if (now.isBefore(proVO.getStartTime())){
             proVO.setProStatus(1);
@@ -43,6 +52,9 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             proVO.setProStatus(2);
         }
         proVO.setProNo(System.getSecurityManager().toString());
+        proVO.setCreateTime(now);
+        proVO.setCreateName(user.getUserName());
+        BeanUtils.copyProperties(proVO,scientificPro);
         this.save(scientificPro);
         List<ScientificProPeople> scientificProPeopleList = new ArrayList<>();
         ScientificProPeople proPeople  = null;
@@ -65,9 +77,59 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
 
     @Override
     public Object getPro(FindProVO findProVO, HttpServletRequest request) {
-        return null;
+        IPage<ScientificPro> page = new Page<>();
+        page.setCurrent(findProVO.getCurrent());
+        page.setSize(findProVO.getSize());
+        List<ProSeeVO> proSeeVOS = new ArrayList<>();
+        QueryWrapper<ScientificPro> qw = new QueryWrapper<>();
+        if (findProVO.getProjectTypeId()!=null){
+            qw.eq("project_type_id",findProVO.getProjectTypeId());
+        }
+        List<ScientificPro> scientificPros = scientificProMapper.selectPage(page,qw).getRecords();
+        ProSeeVO proSeeVO = null;
+        for (ScientificPro pro : scientificPros) {
+            proSeeVO = new ProSeeVO();
+            proSeeVO.setProId(pro.getProId());
+            proSeeVO.setCalculateName(scientificInfoConfMapper.selectOne(new QueryWrapper<ScientificInfoConf>().lambda()
+            .eq(ScientificInfoConf::getCalculateId,pro.getCalculateId())).getCalculateCondition());
+            proSeeVO.setProType(scientificInfoMapper.selectOne(new QueryWrapper<ScientificInfo>().lambda()
+                    .eq(ScientificInfo::getProjectTypeId,pro.getProjectTypeId())).getProjectTypeName());
+            proSeeVO.setCreateName(pro.getCreateName());
+            proSeeVO.setProNo(pro.getProNo());
+            proSeeVO.setEnd(pro.getEndTime());
+            proSeeVO.setStart(pro.getStartTime());
+            List<ScientificProPeople> list = scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
+                    .eq(ScientificProPeople::getProId,pro.getProId()));
+            List<ProPeopleVO> proPeopleVOS = new ArrayList<>();
+            for (ScientificProPeople proPeople : list) {
+                ProPeopleVO proPeopleVO = new ProPeopleVO();
+                BeanUtils.copyProperties(proPeople,proPeopleVO);
+                proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
+                proPeopleVOS.add(proPeopleVO);
+            }
+            proSeeVO.setProPeopleVOS(proPeopleVOS);
+            proSeeVOS.add(proSeeVO);
+        }
+        return proSeeVOS;
     }
 
+
+   public Object getCurrentProPeople(int current,int size,Integer proId){
+        IPage<ScientificProPeople> iPage = new Page<>();
+        iPage.setCurrent(current);
+        iPage.setSize(size);
+        IPage<ScientificProPeople> proPeopleIPage = scientificProPeopleMapper.selectPage(iPage,new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getProId,proId));
+        List<ScientificProPeople> list = proPeopleIPage.getRecords();
+        List<ProPeopleVO> proPeopleVOS = new ArrayList<>();
+        for (ScientificProPeople proPeople : list) {
+            ProPeopleVO proPeopleVO = new ProPeopleVO();
+            BeanUtils.copyProperties(proPeople,proPeopleVO);
+            proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
+            proPeopleVOS.add(proPeopleVO);
+        }
+        return RepResult.repResult(0,"",proPeopleVOS,Integer.valueOf(String.valueOf(proPeopleIPage.getTotal())));
+    }
 
     @Override
     public Object addProMaterials(ScientificProPeopleInfo scientificProPeopleInfo, HttpServletRequest request) {
