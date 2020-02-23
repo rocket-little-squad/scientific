@@ -38,7 +38,7 @@
     </select>
 
 
-    <select id="queryAllScientificInfo" resultType="com.ts.scientific.dto.StatisticsInfoDto" parameterType="com.ts.scientific.vo.StatisticsInfoVO">
+    <select id="queryAllScientificInfo" resultType="com.ts.scientific.dto.ScientificInfoDto" parameterType="com.ts.scientific.vo.ScientificInfoVo">
         SELECT u.dep_name as 'depName' , u.user_name as 'userName',
         a.*,
         b.calculate_score AS calculateScore,
@@ -55,7 +55,7 @@
         LIMIT page,limit
     </select>
 
-    <select id="count"  parameterType="com.ts.scientific.vo.StatisticsInfoVo">
+    <select id="count"  parameterType="com.ts.scientific.vo.ScientificInfoVo">
         SELECT count(project_type_id)
         FROM scientific_info as a JOIN scientific_info_conf b ON a.project_type_id = b.project_type_id
         <if test="projectTypeName != null and projectTypeName != ''">

@@ -4,7 +4,6 @@ import com.ts.scientific.entity.ScientificInfo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 public class ScientificInfoDto extends ScientificInfo implements Serializable {
