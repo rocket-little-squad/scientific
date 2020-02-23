@@ -14,6 +14,7 @@ import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.ProVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, ScientificPro> implements ScientificProService {
 
     @Autowired
@@ -40,14 +42,17 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             proVO.setProStatus(2);
         }
         this.save(scientificPro);
-        proVO.getScientificProPeopleList().forEach(p -> {
-            p.setProId(scientificPro.getProId());
-            p.setCreateName(user.getUserName());
-            p.setUserId(user.getUserId());
-            p.setCreateTime(now);
-            p.setMaterialsStatus(3);
-        });
-        addPeople(proVO.getScientificProPeopleList(),proVO.getScientificProPeopleList().size());
+        List<ScientificProPeople> scientificProPeopleList = new ArrayList<>();
+        ScientificProPeople proPeople  = null;
+        for (Integer userId : proVO.getUserIds()) {
+            proPeople = new ScientificProPeople();
+            proPeople.setProId(scientificPro.getProId());
+            proPeople.setCreateName(user.getUserName());
+            proPeople.setUserId(userId);
+            proPeople.setCreateTime(now);
+            proPeople.setMaterialsStatus(3);
+        }
+        addPeople(scientificProPeopleList,scientificProPeopleList.size());
         return RepResult.repResult(0,"申报成功",null);
     }
 

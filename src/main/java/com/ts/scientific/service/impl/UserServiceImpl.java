@@ -131,7 +131,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             BeanUtils.copyProperties(user,proUserVO);
             proUserVO.setRoleName(roleMapper.selectOne(new QueryWrapper<Role>().lambda()
                     .eq(Role::getRoleId,user.getRoleId())).getRoleName());
+            proUserVOS.add(proUserVO);
         }
-        return RepResult.repResult(0,"成功",users,count);
+        return RepResult.repResult(0,"成功",proUserVOS,count);
     }
 }

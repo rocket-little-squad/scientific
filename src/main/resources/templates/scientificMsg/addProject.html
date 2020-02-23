@@ -21,7 +21,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">计算条件:</label>
         <div  class="layui-input-block" style="width: 300px">
-            <select id="proCondition" required>
+            <select id="proCondition" lay-filter="condition" required>
                 <option value=""></option>
             </select>
         </div>
@@ -44,25 +44,77 @@
             <input type="text" id="proTimeEnd" required     autocomplete="off"  placeholder="请输入项目结束时间" class="layui-input">
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">计算标准:</label>
-        <div class="layui-input-inline">
-            <input type="text" id="proScore" required  placeholder="计算标准" class="layui-input">
-        </div>
-    </div>
+    <div id="info" lay-filter="demo"></div>
     <div class="layui-form-item" >
         <button id="confirm"  type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">确认</button>
     </div>
 </form>
 </body>
 </html>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">选择</a>
+</script>
 <script>
+    var ix = 1;
+    var userId = [];
+    layui.use('table', function(){
+        var tableWidth = $("#info").width() - 28;
+        var table = layui.table;
+        table.render({
+            id:'info',
+            elem: '#info'
+            ,url:dev + 'scientific/getAllUser'
+            ,method: 'post'
+            ,contentType: 'application/json'
+            ,request: {
+                pageName: 'current'
+                ,limitName: 'size'
+            },
+            where:{
+                userIds:userId
+            },
+            response: {
+                statusName: 'code'
+                ,statusCode: 0
+                ,msgName: 'msg'
+                ,countName: 'count'
+                ,dataName: 'data'
+            }
+            ,cols: [[
+                {field:'userName', width: tableWidth*0.22, title: '姓名', }
+                ,{field:'depName', width:tableWidth*0.15, title: '部门'}
+                ,{field:'roleName', width:tableWidth*0.15, title: '角色'}
+                ,{field:'roleName', width:tableWidth*0.15, title: '操作',toolbar: '#barDemo'}
+            ]]
+            ,page: true
+        });
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('确定选择第'+ix+'位负责人吗?', function(index){
+                    userId.push(data.userId)
+                    obj.del();
+                    ix++;
+                    sessionStorage.setItem("proUser",JSON.stringify(userId));
+                    layer.close(index);
+                    reload();
+                });
+            }
+        });
+    });
+
+    function reload(){
+        layui.table.reload('info',{
+            where: {
+                userIds: userId
+            }
+    })}
 
     $(function () {
 
     })
     layui.use('form', function () {
-        debugger
         var form = layui.form;
         $.ajax({
             type: "get",
@@ -71,7 +123,6 @@
             data: {},
             success: function (res) {
                 var data = res.data;
-                console.log(data)
                 $.each(data, function (index, item) {
                     $("#proType")
                         .append(
@@ -82,25 +133,33 @@
                 form.render();
             }
         })
-    })
-    $("#people").click(function () {
-        layui.use('layer',function () {
-            layer.open({
-                type: 2,
-                title: '项目人员',
-                shadeClose: true,
-                shade: false,
-                maxmin: false, //开启最大化最小化按钮
-                area: ['100%','100%'],
-                anim: 2,
-                content: 'addProPeople.html'
-            });
-            form.on('select(from)', function(data){
-                console.log(data.value); //得到被选中的值
-            });
+        form.on('select(type)', function(data){
+            $("#proCondition").empty();
+            $.ajax({
+                type: "get",
+                url: dev + "scientific/getCalculate",
+                async: false,
+                data: {
+                    projectTypeId:data.value
+                },
+                success: function (res) {
+                    var data = res.data;
+                    $("#proScore").val(data[0].calculateScore)
+                    $.each(data, function (index, item) {
+                        $("#proCondition")
+                            .append(
+                                "<option name='"+item.calculateScore+"'"+" value='" + item.calculateId + "'>"
+                                + item.calculateCondition + "</option>");
+                    })
+                    form.render();
+                }
+            })
+        });
+        form.on('select(condition)', function(data){
+         var  score =  $(data.elem).find("option:selected").attr("name")
+            $("#proScore").val(score)
         })
     })
-
 
 
     layui.use('laydate', function(){
@@ -125,20 +184,23 @@
     $('#confirm').click(function () {
         var proType = $("#proType").val();
         var proCondition = $("#proCondition").val();
-       // var proScore = $("#proScore").val();
+        var proScore = $("#proScore").val();
         var proTimeStart = $("#proTimeStart").val();
         var proTimeEnd = $("#proTimeEnd").val();
-        var proPeopleList = '';
+        var pro = {};
+        pro.projectTypeId = proType;
+        pro.calculateId = proCondition;
+        pro.score = proScore;
+        pro.startTime = proTimeStart;
+        pro.endTime = proTimeEnd;
+        pro.userIds = JSON.parse(sessionStorage.getItem("proUser"));
+        console.log(JSON.stringify(pro));
         $.ajax({
             type: "POST",
             url: dev+"scientific/addPro",
             async:false,
-            data: {
-                projectTypeId:proType,
-                calculateId:proCondition,
-                startTime:proTimeStart,
-                endTime:proTimeEnd,
-            },
+            data:JSON.stringify(pro),
+            contentType: 'application/json',
             success: function(res) {
                 if (res.code==0){
                     layer.msg(res.msg)

@@ -11,9 +11,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ProVO extends ScientificPro implements Serializable {
-    /**
-     * 项目成员
-     */
-    List<ScientificProPeople> scientificProPeopleList;
 
+    private List<Integer> userIds;
 }

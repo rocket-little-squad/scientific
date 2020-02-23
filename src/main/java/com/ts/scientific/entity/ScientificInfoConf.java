@@ -42,11 +42,6 @@ public class ScientificInfoConf implements Serializable {
      */
     private String calculateCondition;
 
-    /**
-     * 项目类别id
-     */
-    private Integer projectTypeId;
-
     private String createName;
 
     private LocalDate createTime;
