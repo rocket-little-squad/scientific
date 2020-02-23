@@ -39,30 +39,29 @@
 
 
     <select id="queryAllScientificInfo" resultType="com.ts.scientific.dto.ScientificInfoDto" parameterType="com.ts.scientific.vo.ScientificInfoVo">
-        SELECT u.dep_name as 'depName' , u.user_name as 'userName',
-        a.*,
-        b.calculate_score AS calculateScore,
-        b.calculate_condition AS calculateCondition
-        FROM scientific_info as a JOIN scientific_info_conf b ON a.project_type_id = b.project_type_id
+        SELECT
+        *
+        FROM scientific_info
+        where del_flag = 0
         <if test="projectTypeName != null and projectTypeName != ''">
-            AND    a.project_type_name = #{projectTypeName}
+            AND    project_type_name = #{projectTypeName}
         </if>
         <if test="rule != null and rule != ''">
-            AND    a.rule LIKE concat("%",#{rule},"%")
+            AND    rule LIKE concat("%",#{rule},"%")
         </if>
-        ORDER BY a.project_type_id DESC
-
-        LIMIT page,limit
+        ORDER BY project_type_id DESC
+        LIMIT #{page},#{limit}
     </select>
 
-    <select id="count"  parameterType="com.ts.scientific.vo.ScientificInfoVo">
+    <select id="count" resultType="java.lang.Integer" parameterType="com.ts.scientific.vo.ScientificInfoVo">
         SELECT count(project_type_id)
-        FROM scientific_info as a JOIN scientific_info_conf b ON a.project_type_id = b.project_type_id
+        FROM scientific_info
+        where del_flag = 0
         <if test="projectTypeName != null and projectTypeName != ''">
-            AND    a.project_type_name = #{projectTypeName}
+            AND    project_type_name = #{projectTypeName}
         </if>
         <if test="rule != null and rule != ''">
-            AND    a.rule LIKE concat("%",#{rule},"%")
+            AND    rule LIKE concat("%",#{rule},"%")
         </if>
     </select>
 

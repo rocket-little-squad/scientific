@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>项目类别列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+    <script src="../config/config.js"></script>
+    <link rel="stylesheet" href="../layui/layui.all.js" media="all" />
+    <link rel="stylesheet" href="../js/jquery-3.4.1.js" media="all" />
+    <link rel="stylesheet" href="../layui_ext/dtree/dtree.css" media="all" />
+    <link rel="stylesheet" href="../layui_ext/dtree/font/dtreefont.css" media="all" />
+    <style type="text/css">
+        .select-test{position: absolute;max-height: 500px;height: 350px;overflow: auto;width: 100%;z-index: 123;display: none;border:1px solid silver;top: 42px;}
+        .layui-show{display: block!important;}
+    </style>
+</head>
+
+<body  class="childrenBody">
+<!-- 查询条件开始 -->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>查询条件</legend>
+</fieldset>
+<form action="" id="searchFrm" method="post" lay-filter="searchFrm">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">项目类别:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="projectTypeName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">规则:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="rule" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="button" class="layui-btn" id="doSearch" >查询</button>
+            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+        </div>
+    </div>
+</form>
+<!-- 查询条件结束 -->
+<!-- 数据表格开始 -->
+<table class="layui-hide" lay-filter="roleTable" id="roleTable"></table>
+<div class="layui-hide" id="roleToolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addRole">添加项目类别</button>
+    </div>
+</div>
+<div class="layui-hide" id="roleBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs"  lay-event="selectPermission">分配计算标准</a>
+</div>
+
+<!-- 添加和修改弹出层 -->
+<div style="display: none;padding: 10px" id="addOrUpdateView">
+    <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm" >
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">项目类别</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="roleId">
+                    <input type="text" name="projectTypeName"  autocomplete="off" placeholder="请输入项目类别名称" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">权重规则</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="rule"  autocomplete="off" placeholder="从大到小用逗号隔开" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">时间分配</label>
+                <div class="layui-input-inline">
+                    <select name="ruleTime" lay-verify="required" lay-search="">
+                        <option value="">直接选择</option>
+                        <option value="1">年</option>
+                        <option value="2">月</option>
+                        <option value="3">日</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="doSubmit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 分配权限的弹出层开始 -->
+<div id="selectRoleAuthView" style="display: none;">
+    <table class="layui-hide" id="authTable" lay-filter="authTable"></table>
+</div>
+<!-- 分配权限的弹出层结束-->
+
+<!-- 数据表格结束 -->
+<script type="text/javascript" src="../layui/layui.js"></script>
+<script type="text/javascript" src="../layui_ext/dist/dtree.js"></script>
+
+<script type="text/javascript">
+    var tableIns;//提升作用域
+    layui.config({
+        base : "../layui_ext/dist/"
+    }).extend({
+        "dtree" : "dtree"
+    })
+    layui.use(["form","table","jquery","layer"],function(){
+        var table=layui.table;
+        var form=layui.form;
+        var $=layui.jquery;
+        var layer=layui.layer;
+        tableIns=table.render({
+            elem: '#roleTable'
+            ,url:dev+'scientific/loadAllScientificInfo'
+            ,toolbar: '#roleToolbar'
+            ,page:true
+            ,height:'full-130'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [ [
+                {field:'projectTypeId',  title: 'ID',align:'center'}
+                ,{field:'projectTypeName',  title: '类别名称',align:'center'}
+                ,{field:'rule',  title: '规则',align:'center'}
+                ,{field:'createName', title: '创建人',align:'center'}
+                ,{field:'createTime', title: '创建时间',align:'center'}
+                ,{fixed: 'right', title:'操作',align:'center', toolbar: '#roleBar', width:300}
+            ] ]
+
+        });
+        //模糊查询
+        $("#doSearch").click(function(){
+            var params=$("#searchFrm").serialize();
+            tableIns.reload({
+                url:dev+'scientific/loadAllScientificInfo?'+params
+            })
+        });
+        //监听头工具行的事件
+        table.on('toolbar(roleTable)', function(obj){
+            switch(obj.event){
+                case 'addRole':
+                    openAddRoleView();
+                    break;
+            };
+        });
+        //监听行工具行的事件
+        table.on('tool(roleTable)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent=obj.event;
+            if(layEvent === 'del'){ //删除
+                deleteRoleById(data);
+            } else if(layEvent === 'edit'){ //编辑
+                openUpdateRoleView(data);
+            }else if(layEvent === 'selectPermission'){//分配权限
+                selectRoleAuth(data);
+            }
+        });
+        var mainIndex;
+        var url;
+        function openAddRoleView(){
+            mainIndex=layer.open({
+                type:1,
+                title:'添加科研信息',
+                content:$("#addOrUpdateView"),
+                area:['400px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                success:function(layero, index){
+                    //清空表单
+                    $("#dataFrm")[0].reset();
+                    //移除下拉列表展开的样式
+                    $("#accordionPid").removeClass("layui-show layui-anim layui-anim-upbit");
+                    url=dev+"scientific/addScientificInfo";
+                }
+            })
+        };
+        //提交事件
+        form.on('submit(doSubmit)',function(data){
+            var params=$("#dataFrm").serialize();
+            $.post(url,params,function(obj){
+                layer.msg(obj.msg);
+                //关闭弹出层
+                layer.close(mainIndex);
+                //刷新数据表格
+                tableIns.reload();
+            })
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+        //打开修改的弹出层
+        function openUpdateRoleView(data){
+            mainIndex=layer.open({
+                type:1,
+                title:'修改科研信息',
+                content:$("#addOrUpdateView"),
+                area:['400px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                success:function(layero, index){
+                    form.val("dataFrm",data);
+                    url=dev+"scientific/updateScientificInfo";
+                }
+            });
+        };
+        //删除科研信息
+        function  deleteRoleById(data){
+            layer.confirm('真的要删除【'+data.projectTypeName+'】这个科研项目么？', function(index){
+                //向服务端发送删除指令
+                $.post(dev+"scientific/deleteScientificInfo",{id:data.projectTypeId},function(reslult){
+                    layer.msg(reslult.msg);
+                    layer.close(index);
+                    //刷新数据表格
+                    tableIns.reload();
+                })
+            });
+        }
+        //打开分配计算标准的弹出层
+        function selectRoleAuth(data){
+            mainIndex=layer.open({
+                type:1,
+                title:'分配【'+data.projectTypeName+'】的计算标准',
+                content:$("#selectRoleAuthView"),
+                area:['800px','400px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                btn: ['确认分配'],
+                yes:function(index, layero){
+                    var checkStatus = table.checkStatus('authTable');
+                    var checkData=checkStatus.data;
+                    var params="projectTypeId="+data.projectTypeId;
+                    $.each(checkData,function(index,item){
+                        params+="&ids="+item.calculateId;
+                    });
+                    $.post(dev+"scientific/saveProjectConf",params,function(obj){
+                        layer.msg(obj.msg);
+                        layer.close(index);
+                    })
+                    return false;
+                },
+                btnAlign: 'c',
+                success:function(layero, index){
+                    initRoleData(data);
+                }
+            });
+        };
+        var roleTableIns;
+        function initRoleData(data){
+            roleTableIns=table.render({
+                elem: '#authTable'
+                ,url:dev+'scientific/loadScientificInfoConf?id='+data.projectTypeId
+                ,cellMinWidth:60
+                ,cols: [ [
+                    {type:'checkbox',align:'center'}
+                    ,{field:'calculateId',  title: 'ID',align:'center'}
+                    ,{field:'calculateScore',  title: '计算标准',align:'center'}
+                    ,{field:'calculateCondition', title: '计算条件',align:'center'}
+                ] ]
+            });
+        }
+    });
+    //刷新的方法
+    function reloadTable(id){
+        tableIns.reload({
+            url:dev+'ScientificUser/loadAllRole?id='+id,
+            page:{
+                curr:1
+            }
+        })
+    }
+</script>
+</body>
+</html>

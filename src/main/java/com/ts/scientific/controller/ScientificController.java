@@ -1,18 +1,13 @@
 package com.ts.scientific.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ts.scientific.dto.StatisticsDetailDto;
+import com.ts.scientific.entity.ScientificInfo;
 import com.ts.scientific.entity.ScientificInfoConf;
-import com.ts.scientific.entity.User;
-import com.ts.scientific.service.StatisticsDetailService;
 import com.ts.scientific.service.impl.*;
-import com.ts.scientific.util.PageUtil;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,35 +97,100 @@ public class ScientificController {
         }
 
 
-       /* *//**
+        /**
          * 添加科研信息
          *
-         * @param scientificInfoVo
+         * @param scientificInfo
          * @return
-         *//*
-        @GetMapping("/addScientificInfo")
-        public Object addScientificInfo(ScientificInfoVo scientificInfoVo) {
-                return scientificInfoServiceImpl.insertSelective(scientificInfoVo);
+         */
+        @RequestMapping("/addScientificInfo")
+        public Object addScientificInfo(ScientificInfo scientificInfo) {
+                return scientificInfoServiceImpl.insertSelective(scientificInfo);
         }
 
-        *//**
+       /**
          * 修改科研信息
          *
          * @param scientificInfoVo
          * @return
-         *//*
-        @GetMapping("/updateScientificInfo")
+         */
+        @RequestMapping("/updateScientificInfo")
         public Object updateScientificInfo(ScientificInfoVo scientificInfoVo) {
-                return scientificInfoServiceImpl.updateByPrimaryKeySelective(scientificInfoVo);
+                return scientificInfoServiceImpl.updateScientificInfo(scientificInfoVo);
         }
 
-        *//**
+        /**
          * 删除科研信息
-         *//*
-        @GetMapping("/deleteScientificInfo")
-        public Object deleteScientificInfo(String scientificInfoId) {
-                return scientificInfoServiceImpl.deleteByPrimaryKey(scientificInfoId);
-        }*/
+         */
+        @RequestMapping("/deleteScientificInfo")
+        public Object deleteScientificInfo(String id) {
+                return scientificInfoServiceImpl.deleteScientificInfo(id);
+        }
+
+
+    /**
+     * 分配计算标准
+     *
+     * @param scientificInfoVo
+     * @return
+     */
+    @RequestMapping("/saveProjectConf")
+    public Object saveProjectConf(ScientificInfoVo scientificInfoVo) {
+        return scientificInfoServiceImpl.saveProjectConf(scientificInfoVo);
+    }
+
+
+        /**
+         * 加载计算标准列表数据
+         */
+        @GetMapping("/loadAllScientificInfoConf")
+        public Object loadAllScientificInfoConf(ScientificInfoConfVo scientificInfoConfVo) {
+                return scientificInfoConfServiceImpl.queryAllScientificInfoConf(scientificInfoConfVo);
+        }
+
+
+        /**
+         * 添加计算标准
+         *
+         * @param scientificInfoConf
+         * @return
+         */
+        @RequestMapping("/addScientificInfoConf")
+        public Object addScientificInfoConf(ScientificInfoConf scientificInfoConf) {
+                return scientificInfoConfServiceImpl.insertSelective(scientificInfoConf);
+        }
+
+        /**
+         * 修改计算标准
+         *
+         * @param scientificInfoConf
+         * @return
+         */
+        @RequestMapping("/updateScientificInfoConf")
+        public Object updateScientificInfoConf(ScientificInfoConf scientificInfoConf) {
+                return scientificInfoConfServiceImpl.updateScientificInfoConf(scientificInfoConf);
+        }
+
+        /**
+         * 删除计算标准
+         */
+        @RequestMapping("/deleteScientificInfoConf")
+        public Object deleteScientificInfoConf(String id) {
+                return scientificInfoConfServiceImpl.deleteScientificInfoConf(id);
+        }
+
+    /**
+     * 加载角色管理里面的分配权限的权限列表并选中已拥有的权限
+     */
+    @RequestMapping("loadScientificInfoConf")
+    public Object loadScientificInfoConf(String id) {
+        return scientificInfoConfServiceImpl.loadScientificInfoConf(id);
+    }
+
+
+
+
+
         //===========科研信息结束===============
 
 

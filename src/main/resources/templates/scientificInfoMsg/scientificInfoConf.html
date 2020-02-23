@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>权限管理-权限列表</title>
+    <title>计算条件列表</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -31,15 +31,15 @@
 <form action="" id="searchFrm" method="post" lay-filter="searchFrm">
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">权限名称:</label>
+            <label class="layui-form-label">计算条件:</label>
             <div class="layui-input-inline">
-                <input type="text" name="authName" autocomplete="off" class="layui-input">
+                <input type="text" name="calculateCondition" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label">权限编码:</label>
+            <label class="layui-form-label">计算标准:</label>
             <div class="layui-input-inline">
-                <input type="text" name="authCode" autocomplete="off" class="layui-input">
+                <input type="text" name="calculateScore" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
@@ -53,7 +53,7 @@
 <table class="layui-hide" lay-filter="authTable" id="authTable"></table>
 <div class="layui-hide" id="authToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="addAuth">添加权限</button>
+        <button class="layui-btn layui-btn-sm" lay-event="addAuth">添加计算条件</button>
     </div>
 </div>
 <div class="layui-hide" id="authBar">
@@ -65,18 +65,18 @@
 <div style="display: none;padding: 10px" id="addOrUpdateView">
     <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm" >
         <div class="layui-form-item">
-            <input type="hidden" name="authId">
-            <label class="layui-form-label">权限名称</label>
+            <input type="hidden" name="calculateId">
+            <label class="layui-form-label">计算条件</label>
             <div class="layui-input-block">
-                <input type="text" name="authName"  autocomplete="off" placeholder="请输入权限名称" class="layui-input">
+                <input type="text" name="calculateCondition"  autocomplete="off" placeholder="请输入计算条件" class="layui-input">
             </div>
         </div>
 
         <div class="layui-form-item">
             <input type="hidden" name="authId">
-            <label class="layui-form-label">权限编码</label>
+            <label class="layui-form-label">计算标准</label>
             <div class="layui-input-block">
-                <input type="text" name="authCode"  autocomplete="off" placeholder="请输入权限编码" class="layui-input">
+                <input type="text" name="calculateScore"  autocomplete="off" placeholder="请输入计算标准" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -88,11 +88,6 @@
     </form>
 </div>
 
-<!-- 分配权限的弹出层开始 -->
-<div style="display: none; padding: 10px" id="selectPermissionView">
-    <div class="dtree" id="permissionTree"  data-id="0"></div>
-</div>
-<!-- 分配权限的弹出层结束-->
 
 <!-- 数据表格结束 -->
 <script type="text/javascript" src="../layui/layui.js"></script>
@@ -112,16 +107,15 @@
         var layer = layui.layer;
         tableIns = table.render({
             elem: '#authTable'
-            , url: dev + 'ScientificUser/loadAllAuth'
+            , url: dev + 'scientific/loadAllScientificInfoConf'
             , toolbar: '#authToolbar'
             , page: true
             , height: 'full-130'
             , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             , cols: [[
-                {field: 'authId', title: 'ID', align: 'center'}
-                , {field: 'authName', title: '权限名称', align: 'center'}
-                , {field: 'createName', title: '创建人', align: 'center'}
-                , {field: 'authCode', title: '权限编号', align: 'center'}
+                {field: 'calculateId', title: 'ID', align: 'center'}
+                , {field: 'calculateScore', title: '计算标准', align: 'center'}
+                , {field: 'calculateCondition', title: '计算条件', align: 'center'}
                 , {field: 'createTime', title: '创建时间', align: 'center'}
                 , {fixed: 'right', title: '操作', align: 'center', toolbar: '#authBar', width: 300}
             ]]
@@ -141,7 +135,7 @@
         $("#doSearch").click(function () {
             var params = $("#searchFrm").serialize();
             tableIns.reload({
-                url: dev + 'ScientificUser/loadAllAuth?' + params
+                url: dev + 'scientific/loadAllScientificInfoConf?' + params
             })
         });
         //监听头工具行的事件
@@ -161,8 +155,6 @@
                 deleteAuthById(data);
             } else if (layEvent === 'edit') { //编辑
                 openUpdateAuthView(data);
-            } else if (layEvent === 'selectPermission') {//分配权限
-                openSelectPermission(data);
             }
         });
         var mainIndex;
@@ -171,9 +163,9 @@
         function openAddAuthView() {
             mainIndex = layer.open({
                 type: 1,
-                title: '添加权限',
+                title: '添加计算标准',
                 content: $("#addOrUpdateView"),
-                area: ['800px', '400px'],
+                area: ['400px', '400px'],
                 skin: 'layui-layer-molv',
                 maxmin: true,
                 success: function (layero, index) {
@@ -181,7 +173,7 @@
                     $("#dataFrm")[0].reset();
                     //移除下拉列表展开的样式
                     $("#accordionPid").removeClass("layui-show layui-anim layui-anim-upbit");
-                    url = dev + "ScientificUser/addAuth";
+                    url = dev + "scientific/addScientificInfoConf";
                 }
             })
         };
@@ -204,21 +196,21 @@
                 type: 1,
                 title: '修改权限',
                 content: $("#addOrUpdateView"),
-                area: ['800px', '400px'],
+                area: ['400px', '400px'],
                 skin: 'layui-layer-molv',
                 maxmin: true,
                 success: function (layero, index) {
                     form.val("dataFrm", data);
-                    url = dev + "ScientificUser/updateAuth";
+                    url = dev + "scientific/updateScientificInfoConf";
                 }
             });
         };
 
         //删除权限
         function deleteAuthById(data) {
-            layer.confirm('真的要删除【' + data.authName + '】这个权限么？', function (index) {
+            layer.confirm('真的要删除【' + data.calculateCondition + '】这个计算标准么？', function (index) {
                 //向服务端发送删除指令
-                $.post(dev + "ScientificUser/deleteAuth", {id: data.authId}, function (reslult) {
+                $.post(dev + "scientific/deleteScientificInfoConf", {id: data.calculateId}, function (reslult) {
                     layer.msg(reslult.msg);
                     layer.close(index);
                     //刷新数据表格

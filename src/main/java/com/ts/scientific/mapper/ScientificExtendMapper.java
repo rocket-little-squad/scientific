@@ -1,7 +1,7 @@
 package com.ts.scientific.mapper;
 
-import com.ts.scientific.dto.ScientificInfoDto;
 import com.ts.scientific.dto.StatisticsDetailDto;
+import com.ts.scientific.entity.ScientificInfo;
 import com.ts.scientific.vo.ScientificInfoVo;
 import com.ts.scientific.vo.StatisticsDetailVO;
 
@@ -16,6 +16,6 @@ public interface ScientificExtendMapper {
 
     int count(ScientificInfoVo scientificInfoVo);
 
-    List<ScientificInfoDto> queryAllScientificInfo(ScientificInfoVo scientificInfoVo);
+    List<ScientificInfo> queryAllScientificInfo(ScientificInfoVo scientificInfoVo);
 
 }
