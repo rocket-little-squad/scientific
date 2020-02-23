@@ -85,8 +85,9 @@ public class ScientificController {
          */
         @GetMapping("/getCalculate")
         public Object getCalculate(Integer projectTypeId){
-                return RepResult.repResult(0,"",scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
-                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId)));
+//                return RepResult.repResult(0,"",scientificInfoConfServiceImpl.list(new QueryWrapper<ScientificInfoConf>().lambda()
+//                        .eq(ScientificInfoConf::getProjectTypeId,projectTypeId)));
+                return null;
         }
 
 
