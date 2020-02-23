@@ -17,8 +17,6 @@ import java.util.List;
  */
 public interface ScientificInfoMapper extends BaseMapper<ScientificInfo> {
 
-    int count(ScientificInfoVo scientificInfoVo);
 
-    List<ScientificInfoDto> queryAllScientificInfo(ScientificInfoVo scientificInfoVo);
 
 }
