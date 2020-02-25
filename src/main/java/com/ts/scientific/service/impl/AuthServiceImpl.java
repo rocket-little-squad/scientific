@@ -9,9 +9,11 @@ import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.Auth;
 import com.ts.scientific.entity.Centre;
 import com.ts.scientific.entity.Role;
+import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.AuthMapper;
 import com.ts.scientific.mapper.CentreMapper;
 import com.ts.scientific.mapper.RoleMapper;
+import com.ts.scientific.mapper.UserMapper;
 import com.ts.scientific.service.AuthService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.util.RepResult;
@@ -45,6 +47,8 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
     private CentreMapper centreMapper;
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public Object queryAllAuth(AuthVo authVo) {
@@ -118,5 +122,20 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
             throw new BizException("修改权限数据失败");
         }
         return RepResult.repResult(0, "修改成功", null);
+    }
+
+    public Object queryRoleAuth(){
+        String currentUserName = WebUtils.getCurrentUserName();
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", currentUserName));
+        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_id", user.getRoleId()));
+        List<Centre> centres = centreMapper.selectList(new QueryWrapper<Centre>().eq("role_id", user.getRoleId()));
+        Map<String,List<String>> roleAuths = new HashMap<String,List<String>>();
+        List<String> auths = new ArrayList<>();
+        for (Centre centre : centres) {
+            Auth auth_id = authMapper.selectOne(new QueryWrapper<Auth>().eq("auth_id", centre.getAuthId()));
+            auths.add(auth_id.getAuthCode());
+        }
+        roleAuths.put(role.getRoleId().toString(),auths);
+        return RepResult.repResult(0,"查询成功",roleAuths);
     }
 }

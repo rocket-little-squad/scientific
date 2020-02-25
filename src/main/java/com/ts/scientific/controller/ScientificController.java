@@ -190,7 +190,16 @@ public class ScientificController {
         public Object getCurrentProPeople(int current,int size,Integer proId){
                 return scientificProServiceImpl.getCurrentProPeople(current,size,proId);
         }
-        //===========科研信息开始===============
+
+
+    /**
+     * 材料审核
+     */
+    @RequestMapping("audit")
+    public Object audit(){
+        return null;
+    }
+    //===========科研信息开始===============
 
         /**
          * 加载科研信息列表数据

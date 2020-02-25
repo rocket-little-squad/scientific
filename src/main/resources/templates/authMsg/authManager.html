@@ -44,7 +44,7 @@
         </div>
         <div class="layui-inline">
             <button type="button" class="layui-btn" id="doSearch" >查询</button>
-            <button type="reset" class="layui-btn layui-btn-primary">清空</button>
+            <button type="reset" class="layui-btn layui-btn-primary" id="doReload">清空</button>
         </div>
     </div>
 </form>
@@ -142,6 +142,11 @@
             var params = $("#searchFrm").serialize();
             tableIns.reload({
                 url: dev + 'ScientificUser/loadAllAuth?' + params
+            })
+        });
+        $("#doReload").click(function () {
+            tableIns.reload({
+                url: dev + 'ScientificUser/loadAllAuth'
             })
         });
         //监听头工具行的事件
