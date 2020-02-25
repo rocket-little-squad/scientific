@@ -124,7 +124,7 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
         return RepResult.repResult(0, "修改成功", null);
     }
 
-    public Object queryRoleAuth(){
+    public  Map<String,List<String>> queryRoleAuth(){
         String currentUserName = WebUtils.getCurrentUserName();
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", currentUserName));
         Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_id", user.getRoleId()));
@@ -136,6 +136,6 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
             auths.add(auth_id.getAuthCode());
         }
         roleAuths.put(role.getRoleId().toString(),auths);
-        return RepResult.repResult(0,"查询成功",roleAuths);
+        return roleAuths;
     }
 }

@@ -27,17 +27,17 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item"><a href="./performanceMsg/performance.html" target="contentFrame">科研绩效</a></li>
-                <li class="layui-nav-item"><a href="./scientificMsg/scientific.html" target="contentFrame">科研项目</a></li>
+                <li class="layui-nav-item"><a href="./performanceMsg/performance.html"  style="display: none" target="contentFrame" id="performance">科研绩效</a></li>
+                <li class="layui-nav-item"><a href="./scientificMsg/scientific.html" target="contentFrame" style="display: none" id="project">科研项目</a></li>
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">科研信息</a>
+                    <a class="" href="javascript:;" style="display: none" id="projectInfo">科研信息</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="./scientificInfoMsg/scientificInfoConf.html" target="contentFrame">计算条件</a></dd>
-                        <dd><a href="./scientificInfoMsg/scientificInfo.html" target="contentFrame">项目类别</a></dd>
+                        <dd><a href="./scientificInfoMsg/scientificInfoConf.html" target="contentFrame" style="display: none"  id="condition">计算条件</a></dd>
+                        <dd><a href="./scientificInfoMsg/scientificInfo.html" target="contentFrame"  style="display: none" id="projectType">项目类别</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">系统设置</a>
+                    <a class="" href="javascript:;" style="display:none;" id="admin">系统设置</a>
                     <dl class="layui-nav-child">
                         <dd><a href="./authMsg/authManager.html" target="contentFrame">权限管理</a></dd>
                         <dd><a href="./roleMsg/roleManager.html" target="contentFrame">角色管理</a></dd>
@@ -79,8 +79,6 @@
             },
             success: function(res){
                 if (res.code==0){
-                    layer.msg(res.msg)
-                    console.log(res)
                     // $.cookie('userName',res.data.userName);
                     sessionStorage.removeItem("userName")
                     sessionStorage.removeItem("userId");

@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author 
- * @since 2020-02-23
+ * @since 2020-02-25
  */
 public interface ScientificInfoCentreMapper extends BaseMapper<ScientificInfoCentre> {
 
