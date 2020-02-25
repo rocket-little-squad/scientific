@@ -196,8 +196,8 @@ public class ScientificController {
      * 材料审核
      */
     @RequestMapping("audit")
-    public Object audit(){
-        return null;
+    public Object audit(String id,String bank){
+        return scientificProServiceImpl.getAudit(id,bank);
     }
     //===========科研信息开始===============
 

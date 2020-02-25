@@ -132,6 +132,25 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         return RepResult.repResult(0,"",proPeopleVOS,Integer.valueOf(String.valueOf(proPeopleIPage.getTotal())));
     }
 
+    public Object getAudit(String id,String bank){
+        ScientificProPeople scientificProPeople = scientificProPeopleMapper.selectById(id);
+        scientificProPeople.setMaterialsStatus(Integer.parseInt(bank));
+        int i = scientificProPeopleMapper.updateById(scientificProPeople);
+        List<ScientificProPeople> pro_id = scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().eq("pro_id", scientificProPeople.getProId()));
+        boolean kens = true;
+        for (ScientificProPeople proPeople : pro_id) {
+            if(proPeople.getMaterialsStatus()!=1){
+                kens = false;
+            }
+        }
+        if(kens){
+            ScientificPro scientificPro = scientificProMapper.selectById(scientificProPeople.getProId());
+            ScientificPro scientificPro1 = scientificPro.setProStatus(2);
+            int i1 = scientificProMapper.updateById(scientificPro1);
+        }
+        return RepResult.repResult(0,"修改成功",null);
+    }
+
     @Override
     public Object addProMaterials(ScientificProPeopleInfo scientificProPeopleInfo, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");

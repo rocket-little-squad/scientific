@@ -110,7 +110,38 @@
                     });
                 })
             }else if(obj.event === 'audit'){
-
+                layer.open({
+                    btn: ['通过', '不通过']
+                    ,yes: function(index, layero){
+                        $.ajax({
+                            type: "get",
+                            url: dev + "scientific/audit",
+                            async: false,
+                            data: {
+                                id: data.proPeopleId,
+                                bank: 1
+                            },
+                            success: function (res) {
+                                layer.msg(res.msg);
+                                reload();
+                            }
+                        })
+                    },btn2: function(index, layero){
+                        $.ajax({
+                            type: "get",
+                            url: dev + "scientific/audit",
+                            async: false,
+                            data: {
+                                id: data.proPeopleId,
+                                bank: 2
+                            },
+                            success: function (res) {
+                                layer.msg(res.msg);
+                                reload();
+                            }
+                        })
+                    }
+                });
             }
         });
     });
