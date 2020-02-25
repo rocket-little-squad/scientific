@@ -1,13 +1,20 @@
 package com.ts.scientific.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.ts.scientific.entity.Auth;
+import com.ts.scientific.entity.Centre;
 import com.ts.scientific.entity.Role;
+import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.AuthMapper;
+import com.ts.scientific.mapper.CentreMapper;
+import com.ts.scientific.mapper.RoleMapper;
+import com.ts.scientific.mapper.UserMapper;
 import com.ts.scientific.service.impl.AuthServiceImpl;
 import com.ts.scientific.service.impl.RoleServiceImpl;
 import com.ts.scientific.service.impl.UserServiceImpl;
 import com.ts.scientific.util.RepResult;
+import com.ts.scientific.util.WebUtils;
 import com.ts.scientific.vo.AuthVo;
 import com.ts.scientific.vo.RoleVo;
 import com.ts.scientific.vo.UserVo;
@@ -18,8 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,6 +52,14 @@ public class ScientificUserController {
 
     @Resource
     private AuthMapper authMapper;
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private RoleMapper roleMapper;
+    @Resource
+    private CentreMapper centreMapper;
 
 
     //==================用户开始=========================
@@ -181,6 +200,26 @@ public class ScientificUserController {
 
 
     //==================权限结束===================
+
+    /**
+     * 获得用户角色与权限
+     * @return
+     */
+    @RequestMapping("getUserRoleAuth")
+    public Object queryRoleAuth(){
+        String currentUserName = WebUtils.getCurrentUserName();
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", currentUserName));
+        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_id", user.getRoleId()));
+        List<Centre> centres = centreMapper.selectList(new QueryWrapper<Centre>().eq("role_id", user.getRoleId()));
+        Map<String,List<String>> roleAuths = new HashMap<String,List<String>>();
+        List<String> auths = new ArrayList<>();
+        for (Centre centre : centres) {
+            Auth auth_id = authMapper.selectOne(new QueryWrapper<Auth>().eq("auth_id", centre.getAuthId()));
+            auths.add(auth_id.getAuthCode());
+        }
+        roleAuths.put(role.getRoleId().toString(),auths);
+        return RepResult.repResult(0,"查询成功",roleAuths);
+    }
 
 
     /**

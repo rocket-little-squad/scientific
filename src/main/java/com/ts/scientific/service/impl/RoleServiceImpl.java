@@ -10,6 +10,7 @@ import com.ts.scientific.entity.Role;
 import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.CentreMapper;
 import com.ts.scientific.mapper.RoleMapper;
+import com.ts.scientific.mapper.UserMapper;
 import com.ts.scientific.service.RoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.util.RepResult;
@@ -39,6 +40,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Resource
     private CentreMapper centreMapper;
+    @Resource
+    private UserMapper userMapper;
+
 
     @Override
     public Object queryAllRole(RoleVo roleVo) {
@@ -66,6 +70,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public Object deleteByPrimaryKey(Integer id) {
         if (null == id) {
             throw new BizException("删除id为空");
+        }
+        List<User> role_id = userMapper.selectList(new QueryWrapper<User>().eq("role_id", id));
+        if(null!=role_id || role_id.size()>0){
+            return RepResult.repResult(0, "该角色正在被使用", null);
         }
         centreMapper.delete(new QueryWrapper<Centre>().eq("role_id", id));
         if (1 != roleMapper.deleteById(id)) {

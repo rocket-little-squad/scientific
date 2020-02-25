@@ -3,6 +3,7 @@ package com.ts.scientific.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.Auth;
@@ -42,11 +43,14 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
 
     @Resource
     private CentreMapper centreMapper;
+    @Resource
+    private RoleMapper roleMapper;
 
     @Override
     public Object queryAllAuth(AuthVo authVo) {
         LambdaQueryWrapper<Auth> queryWrapper = new LambdaQueryWrapper<Auth>()
-                .eq(StringUtils.isNotBlank(authVo.getAuthName()), Auth::getAuthName, authVo.getAuthName());
+                .eq(StringUtils.isNotBlank(authVo.getAuthName()), Auth::getAuthName, authVo.getAuthName())
+                .eq(StringUtils.isNotBlank(authVo.getAuthCode()),Auth::getAuthCode,authVo.getAuthCode());
         Page<Auth> authPage = authMapper.selectPage(new Page<>(authVo.getPage(), authVo.getLimit()), queryWrapper);
         List<Auth> auths = authPage.getRecords();
         return RepResult.repResult(0, "查询成功", auths, (int) authPage.getTotal());
@@ -94,6 +98,10 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
     public Object deleteByPrimaryKey(Integer id) {
         if (null == id) {
             throw new BizException("删除id为空");
+        }
+        List<Centre> auth_id = centreMapper.selectList(new QueryWrapper<Centre>().eq("auth_id", id));
+        if(null!=auth_id || auth_id.size()>0){
+            return RepResult.repResult(0, "该权限正在被使用", null);
         }
         if (1 != authMapper.deleteById(id)) {
             throw new BizException("删除权限数据失败");
