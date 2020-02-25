@@ -6,6 +6,7 @@ import com.ts.scientific.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -34,7 +35,8 @@ public class TaskQuartz {
     @Resource
     private StatisticsDetailMapper statisticsDetailMapper;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    //@Scheduled(cron = "0/10 * * * * ?")
+    @Transactional(rollbackFor = Exception.class)
     public void task(){
       List<ScientificPro> scientificPros = scientificProMapper.selectList(new QueryWrapper<ScientificPro>().lambda()
         .eq(ScientificPro::getProStatus,3));
@@ -46,29 +48,30 @@ public class TaskQuartz {
            List<ScientificProPeople>  peoples =scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda().
                     eq(ScientificProPeople::getProId,scientificPro.getProId())
                     .orderByAsc(ScientificProPeople::getRank));
-            if (scientificInfo.getRuleTime() != null){
+            if (scientificInfo.getRuleTime() != null) {
                 //结束时间与现在时间
-                Period period = Period.between(LocalDate.now(),scientificPro.getEndTime());
+                Period period = Period.between(LocalDate.now(), scientificPro.getEndTime());
                 //开始时间与结束时间
-                Period  per =  Period.between(scientificPro.getStartTime(),scientificPro.getEndTime());
-                if (scientificInfo.getRuleTime() == 1){
-                   int year = period.getYears();
-                   score  = scientificPro.getScore()
-                           .divide(new BigDecimal(per.getYears()),2, RoundingMode.HALF_UP)
-                           .multiply(new BigDecimal(year));
+                Period per = Period.between(scientificPro.getStartTime(), scientificPro.getEndTime());
+                if (scientificInfo.getRuleTime() == 1) {
+                    int year = period.getYears();
+                    score = scientificPro.getScore()
+                            .divide(new BigDecimal(per.getYears()), 2, RoundingMode.HALF_UP)
+                            .multiply(new BigDecimal(year));
                 }
-                if (scientificInfo.getRuleTime() == 2){
+                if (scientificInfo.getRuleTime() == 2) {
                     int months = period.getMonths();
-                    score  = scientificPro.getScore()
-                            .divide(new BigDecimal(per.getMonths()),2, RoundingMode.HALF_UP)
+                    score = scientificPro.getScore()
+                            .divide(new BigDecimal(per.getMonths()), 2, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(months));
                 }
-                if (scientificInfo.getRuleTime() == 3){
+                if (scientificInfo.getRuleTime() == 3) {
                     int day = period.getMonths();
-                    score  = scientificPro.getScore()
-                            .divide(new BigDecimal(per.getDays()),2, RoundingMode.HALF_UP)
+                    score = scientificPro.getScore()
+                            .divide(new BigDecimal(per.getDays()), 2, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(day));
                 }
+            }
                String[] rules =  scientificInfo.getRule().split(",");
                 if (rules.length >= peoples.size()) {
                     for (int i = 0; i < rules.length; i++) {
@@ -77,7 +80,7 @@ public class TaskQuartz {
                         ScientificProPeople  people=  peoples.get(i);
                         StatisticsDetail detail = new StatisticsDetail();
                         detail.setCreateTime(LocalDate.now());
-                        detail.setScore(scientificPro.getScore().divide(rule));
+                        detail.setScore(scientificPro.getScore().multiply(rule));
                         detail.setUserId(people.getUserId());
                         statisticsDetailMapper.insert(detail);
                         if ( i == peoples.size()-1) {
@@ -95,18 +98,19 @@ public class TaskQuartz {
                             BigDecimal r = new BigDecimal(rules[i].replace("%", ""))
                                     .divide(new BigDecimal(100));
                             //rule = rule.subtract(r);
-                            detail.setScore(scientificPro.getScore().divide(r));
+                            detail.setScore(scientificPro.getScore().multiply(r));
                         }else {
                             BigDecimal rule = new BigDecimal(rules[rules.length-1].replace("%", ""))
                                     .divide(new BigDecimal(100)).divide(new BigDecimal(peoples.size()-i+1));
-                            detail.setScore(scientificPro.getScore().divide(rule));
+                            detail.setScore(scientificPro.getScore().multiply(rule));
                         }
                         statisticsDetailMapper.insert(detail);
                     }
                 }
+                scientificPro.setProStatus(5);
+                scientificProMapper.update(scientificPro,new QueryWrapper<ScientificPro>().lambda()
+                        .eq(ScientificPro::getProId,scientificPro.getProId()));
             }
-        }
-
     }
 
     public static void main(String[] args) {

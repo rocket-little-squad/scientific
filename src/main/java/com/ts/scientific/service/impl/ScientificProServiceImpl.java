@@ -98,6 +98,7 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             proSeeVO.setProNo(pro.getProNo());
             proSeeVO.setEnd(pro.getEndTime());
             proSeeVO.setStart(pro.getStartTime());
+            proSeeVO.setProStatus(pro.getProStatus());
             List<ScientificProPeople> list = scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
                     .eq(ScientificProPeople::getProId,pro.getProId()));
             List<ProPeopleVO> proPeopleVOS = new ArrayList<>();

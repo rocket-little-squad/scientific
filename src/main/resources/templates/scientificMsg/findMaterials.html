@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../layui/layui.all.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
+</head>
+<body class="global-body-mp">
+<div id="materials">
+
+</div>
+</body>
+</html>
+<script>
+
+
+
+
+    layui.use('table', function(){
+        $.ajax({
+            type: "get",
+            url: dev + "scientific/findMaterials",
+            async: false,
+            data: {
+                userId:parent.userId,
+                proId:parent.proId
+            },
+            success: function (res) {
+                var data = res.data;
+                $("#materials").html(data.materials);
+            }
+        })
+    });
+
+
+    layui.use('form', function() {
+        var form = layui.form;
+        form.render();
+    })
+</script>

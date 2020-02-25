@@ -6,16 +6,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ts.scientific.config.BizException;
 import com.ts.scientific.dto.StatisticsDetailDto;
-import com.ts.scientific.entity.ScientificInfo;
-import com.ts.scientific.entity.ScientificInfoConf;
-import com.ts.scientific.entity.ScientificProPeopleInfo;
-import com.ts.scientific.entity.User;
+import com.ts.scientific.entity.*;
 import com.ts.scientific.mapper.ScientificProPeopleInfoMapper;
+import com.ts.scientific.mapper.ScientificProPeopleMapper;
 import com.ts.scientific.service.StatisticsDetailService;
 import com.ts.scientific.service.impl.*;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,7 +55,8 @@ public class ScientificController {
         @Resource
         private ScientificProPeopleInfoMapper scientificProPeopleInfoMapper;
 
-
+        @Resource
+        private ScientificProPeopleMapper scientificProPeopleMapper;
         /**
          * 科研绩效查询
          */
@@ -121,13 +121,47 @@ public class ScientificController {
          * 材料上报
          */
         @PostMapping("/insetMaterials")
-        public Object insetMaterials(ScientificProPeopleInfo scientificProPeopleInfo){
+        @Transactional(rollbackFor = Exception.class)
+        public Object insetMaterials(@RequestBody ProPeopleMaterVO proPeopleMaterVO){
+            ScientificProPeople proPeople = new ScientificProPeople();
+            ScientificProPeopleInfo proPeopleInfo =  scientificProPeopleInfoMapper.selectOne(new QueryWrapper<ScientificProPeopleInfo>().lambda()
+                    .eq(ScientificProPeopleInfo::getProId,proPeopleMaterVO.getProId())
+                    .eq(ScientificProPeopleInfo::getUserId,proPeopleMaterVO.getUserId()));
+            ScientificProPeopleInfo scientificProPeopleInfo = new ScientificProPeopleInfo();
+            if (proPeopleInfo == null) {
+                proPeople.setMaterialsStatus(4);
+                scientificProPeopleMapper.update(proPeople, new QueryWrapper<ScientificProPeople>().lambda()
+                        .eq(ScientificProPeople::getProPeopleId, proPeopleMaterVO.getProPeopleId()));
+                scientificProPeopleInfo.setMaterials(proPeopleMaterVO.getMaterials());
+                scientificProPeopleInfo.setProId(proPeopleMaterVO.getProId());
+                scientificProPeopleInfo.setUserId(proPeopleMaterVO.getUserId());
+                scientificProPeopleInfoMapper.insert(scientificProPeopleInfo);
+            }else {
+                scientificProPeopleInfo.setMaterials(proPeopleMaterVO.getMaterials());
                 scientificProPeopleInfoMapper.update(scientificProPeopleInfo,new QueryWrapper<ScientificProPeopleInfo>().lambda()
-                .eq(ScientificProPeopleInfo::getProPeopleInfoId,scientificProPeopleInfo.getProPeopleInfoId()));
-                return RepResult.repResult(0,"上报成功",null);
+                        .eq(ScientificProPeopleInfo::getProPeopleInfoId,proPeopleInfo.getProPeopleInfoId()));
+            }
+            return RepResult.repResult(0,"上报成功",null);
+
+        }
+
+        @GetMapping("/delProPeople")
+        public Object delProPeople(Integer proPeopleId){
+            scientificProPeopleMapper.delete(new QueryWrapper<ScientificProPeople>().lambda()
+                    .eq(ScientificProPeople::getProPeopleId,proPeopleId));
+            return RepResult.repResult(0,"成功",null);
         }
 
         /**
+         * 查看申报材料
+         */
+        @GetMapping("/findMaterials")
+        public Object materials(Integer proId,Integer userId){
+            return RepResult.repResult(0,"成功",scientificProPeopleInfoMapper.selectOne(new QueryWrapper<ScientificProPeopleInfo>().lambda()
+                    .eq(ScientificProPeopleInfo::getProId,proId)
+                    .eq(ScientificProPeopleInfo::getUserId,userId)));
+        }
+    /**
          * 项目类别
          */
         @GetMapping("/getType")

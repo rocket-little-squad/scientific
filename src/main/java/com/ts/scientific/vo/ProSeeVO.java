@@ -26,5 +26,7 @@ public class ProSeeVO implements Serializable {
 
     private Integer proId;
 
+    private Integer proStatus;
+
     List<ProPeopleVO> proPeopleVOS;
 }

@@ -14,27 +14,15 @@
     <div class="layui-row">
         <div class="layui-col-xs12">
             <div class="layui-form">
-                <div class="layui-form-item">
-                    <div class="layui-row">
                         <div class="layui-col-xs12">
-                            <div class="layui-inline"  style="margin-top: 5px;" >
-                                <label class="layui-form-label" style="width: 50px">统计维度：</label>
-                                <div  class="layui-input-block" style="width: 200px">
-                                    <select id="time" >
+                            <div class="layui-form-item" >
+                                <label class="layui-form-label" >项目类别:</label>
+                                <div  class="layui-input-block" style="width: 300px">
+                                    <select  lay-filter="type" id="proType" required>
                                         <option value=""></option>
-                                        <option value="0">年</option>
-                                        <option value="1">月</option>
-                                        <option value="2">日</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="layui-inline" style="margin-top: 5px;" >
-                                <label class="layui-form-label">部门:</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="depName"  lay-filter="depName" placeholder="请输入部门" class="layui-input">
-                                </div>
-                            </div>
-                        </div>
                         <div class="layui-form-item" style="margin-left: 600px">
                             <div class="layui-inline">
                                 <button class="layui-btn layui-btn-normal" id="find">查询</button>
@@ -51,12 +39,24 @@
             </div>
         </div>
     </div>
-</div>
 <div id="info" lay-filter="demo"></div>
 </body>
 </html>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">项目人员</a>
+</script>
+<script type="text/html" id="status">
+    {{#  if(d.proStatus == 1){ }}
+    进行中
+    {{#  } else if(d.proStatus == 2){ }}
+    完成
+    {{#  } else if(d.proStatus == 3){ }}
+    审核不通过
+    {{#  } else if(d.proStatus == 4){ }}
+    超时
+    {{#  } else if(d.proStatus == 5){ }}
+    已结算
+    {{#  } }}
 </script>
 <script>
     var proId;
@@ -73,19 +73,35 @@
         });
     })
 
-
+    layui.use('form', function () {
+        var form = layui.form;
+        $.ajax({
+            type: "get",
+            url: dev + "scientific/getType",
+            async: false,
+            data: {},
+            success: function (res) {
+                var data = res.data;
+                $.each(data, function (index, item) {
+                    $("#proType")
+                        .append(
+                            "<option value='" + item.projectTypeId + "'>"
+                            + item.projectTypeName + "</option>");
+                })
+                //form.render(null, 'merchant');
+                form.render();
+            }
+        })
+    })
 
     $("#find").click(function () {
         find();
     })
 
     function find(){
-        var time = $('#time').val();
-        var depName = $('#depName').val();
         layui.table.reload('info',{
             where: {
-                dimension:time,
-                depName:depName
+                projectTypeId:$("#proType").val()
             }});
     }
 
@@ -124,7 +140,8 @@
                 ,{field:'start', width:tableWidth*0.1, title: '开始时间',}
                 ,{field:'end', width:tableWidth*0.1, title: '结束时间'}
                 ,{field:'createName', width:tableWidth*0.1, title: '创建人',}
-                ,{field:'proNo', width:tableWidth*0.1, title: '项目编号',}
+                ,{field:'proNo', width:tableWidth*0.1, title: '项目编号'}
+                ,{field:'proStatus', width:tableWidth*0.1, title: '项目状态',toolbar:'#status'}
                 ,{field:'proNo', width:tableWidth*0.1, title: '操作',toolbar:'#barDemo'}
             ]]
             ,page: true

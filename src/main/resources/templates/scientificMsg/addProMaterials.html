@@ -25,8 +25,35 @@
                 ,type:'post'
             }
         });
-        layedit.build('demo', {
+       var index = layedit.build('demo', {
             height: 500//设置编辑器高度
         });//建立编辑器
+
+        $("#add").click(function () {
+            var proPeopleId = parent.proPeopleId;
+            var  userId = parent.userId;
+            var proId = parent.proId;
+            var content =  layedit.getContent(index);
+            var json = {};
+            json.proPeopleId = proPeopleId;
+            json.userId = userId;
+            json.proId = proId;
+            json.materials = content;
+            console.log(JSON.stringify(json));
+            $.ajax({
+                type: "POST",
+                url: dev + "scientific/insetMaterials",
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify(json),
+                success: function (res) {
+                    var data = res.data;
+                    var index=parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                    parent.layer.msg(res.msg);
+                    parent.reload();
+                }
+            })
+        })
     });
 </script>
