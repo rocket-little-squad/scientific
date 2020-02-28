@@ -19,6 +19,7 @@
                     贤心
                 </a>
             </li>
+            <li class="layui-nav-item"><a href="javascript:;" id="update">修改密码</a></li>
             <li class="layui-nav-item"><a href="javascript:;" id="loginOut">退出</a></li>
         </ul>
     </div>
@@ -46,6 +47,28 @@
                 </li>
             </ul>
         </div>
+    </div>
+
+    <div style="display: none; padding: 10px" id="addOrUpdateView">
+        <form class="layui-form" action="" method="post" id="dataFrm" lay-filter="dataFrm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="password" id="password"
+                               autocomplete="off" placeholder="请输入密码" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="doSubmit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <div class="layui-body">
@@ -89,6 +112,44 @@
             }
         })
     })
+
+    layui.use(["form","layer"],function(){
+        var layer=layui.layer;
+        var form=layui.form;
+        var url;
+        var mainIndex;
+        $("#update").click( function (){
+            mainIndex=layer.open({
+                type:1,
+                title:'修改密码',
+                content:$("#addOrUpdateView"),
+                area:['400px','200px'],
+                skin:'layui-layer-molv',
+                maxmin:true,
+                success:function(layero, index){
+                    //清空表单
+                    $("#dataFrm")[0].reset();
+                    //移除下拉列表展开的样式
+                    $("#accordionDeptid").removeClass("layui-show layui-anim layui-anim-upbit");
+
+                    url=dev+"ScientificUser/updatePassword";
+                }
+            })
+        })
+
+        form.on('submit(doSubmit)',function(data){
+            var params=$("#dataFrm").serialize();
+            $.post(url,params,function(obj){
+                 layer.msg(obj.msg);
+                //关闭弹出层
+                layer.close(mainIndex);
+            })
+            return false;
+        });
+
+    })
+
+
 
 
 </script>

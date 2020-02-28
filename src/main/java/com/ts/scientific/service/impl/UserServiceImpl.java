@@ -82,12 +82,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException("添加数据为空");
         }
         record.setCreateName(WebUtils.getCurrentUserName());
-
         record.setPassword("123456");
         record.setCreateTime(LocalDate.now());
+        User email = userMapper.selectOne(new QueryWrapper<User>().eq("email", record.getEmail()));
+        if(null!=email){
+            return RepResult.repResult(1, "邮箱已存在", null);
+        }
         if (1 != userMapper.insert(record)) {
             throw new BizException("添加用户数据失败");
         }
+
         return RepResult.repResult(0, "添加成功", null);
     }
 
@@ -101,6 +105,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return RepResult.repResult(0, "修改成功", null);
     }
+
+
+    public Object updatePassword(String password) {
+        if (null == password) {
+            throw new BizException("修改数据为空");
+        }
+        User user_name = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", WebUtils.getCurrentUserName()));
+        user_name.setPassword(password);
+        if (1 != userMapper.updateById(user_name)) {
+            throw new BizException("修改密码失败");
+        }
+        return RepResult.repResult(0, "修改成功", null);
+    }
+
 
     @Override
     public Object saveUserRole(UserVo userVo) {
