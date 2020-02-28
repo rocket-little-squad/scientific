@@ -82,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException("添加数据为空");
         }
         record.setCreateName(WebUtils.getCurrentUserName());
+
         record.setPassword("123456");
         record.setCreateTime(LocalDate.now());
         if (1 != userMapper.insert(record)) {

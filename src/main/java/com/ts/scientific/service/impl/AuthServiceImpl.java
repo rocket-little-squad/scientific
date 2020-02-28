@@ -129,13 +129,14 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, Auth> implements Au
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", currentUserName));
         Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_id", user.getRoleId()));
         List<Centre> centres = centreMapper.selectList(new QueryWrapper<Centre>().eq("role_id", user.getRoleId()));
-        Map<String,List<String>> roleAuths = new HashMap<String,List<String>>();
+        Map<String,Object> roleAuths = new HashMap<String,Object>();
         List<String> auths = new ArrayList<>();
         for (Centre centre : centres) {
             Auth auth_id = authMapper.selectOne(new QueryWrapper<Auth>().eq("auth_id", centre.getAuthId()));
             auths.add(auth_id.getAuthCode());
         }
-        roleAuths.put(role.getRoleId().toString(),auths);
+        roleAuths.put("roleId",role.getRoleId().toString());
+        roleAuths.put("auths",auths);
         return RepResult.repResult(0,"查询成功",roleAuths);
     }
 }
