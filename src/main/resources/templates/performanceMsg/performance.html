@@ -49,6 +49,8 @@
         </div>
     </div>
 </div>
+<script type="text/html" id="toolbarDemo">
+    </script>
 <div id="info"></div>
 </body>
 </html>
@@ -105,6 +107,12 @@
             id:'info',
             elem: '#info'
             ,url:dev + 'scientific/getScientificDetail'
+            ,toolbar: '#toolbarDemo'
+            ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                ,layEvent: 'LAYTABLE_TIPS'
+                ,icon: 'layui-icon-tips'
+            }]
             ,request: {
                 pageName: 'currentPage'
                 ,limitName: 'pageSize'

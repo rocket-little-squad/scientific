@@ -13,10 +13,18 @@
 </body>
 </html>
 <script type="text/html" id="barDemo">
+    {{#  if(d.userFlag == 1){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="submit">提交材料</a>
+    {{#  } }}
+    {{#  if(d.flag == 1){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{#  } }}
+    {{#  if(d.userFlag == 1){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="see">查看提交材料</a>
+    {{#  } }}
+    {{#  if(d.auditFlag == 1){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>
+    {{#  } }}
 </script>
 <script type="text/html" id="status">
     {{#  if(d.materialsStatus == 1){ }}

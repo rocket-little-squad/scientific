@@ -10,6 +10,7 @@ import com.ts.scientific.entity.*;
 import com.ts.scientific.mapper.*;
 import com.ts.scientific.service.ScientificProService;
 import com.ts.scientific.util.RepResult;
+import com.ts.scientific.util.WebUtils;
 import com.ts.scientific.vo.FindProVO;
 import com.ts.scientific.vo.ProPeopleVO;
 import com.ts.scientific.vo.ProSeeVO;
@@ -19,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, ScientificPro> implements ScientificProService {
@@ -41,6 +44,8 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
     private ScientificInfoCentreMapper scientificInfoCentreMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private AuthServiceImpl authServiceImpl;
     @Override
     public Object addPro(ProVO proVO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -77,6 +82,12 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
 
     @Override
     public Object getPro(FindProVO findProVO, HttpServletRequest request) {
+
+        Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+        if (authCode.get(user.getRoleId()).contains("all")){
+            ///proPeopleVO.setFlag(1);
+        }
         IPage<ScientificPro> page = new Page<>();
         page.setCurrent(findProVO.getCurrent());
         page.setSize(findProVO.getSize());
@@ -116,9 +127,13 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
 
 
    public Object getCurrentProPeople(int current,int size,Integer proId){
+        Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
         IPage<ScientificProPeople> iPage = new Page<>();
         iPage.setCurrent(current);
         iPage.setSize(size);
+        ScientificPro scientificPro =  scientificProMapper.selectOne(new QueryWrapper<ScientificPro>().lambda()
+                .eq(ScientificPro::getProId,proId));
         IPage<ScientificProPeople> proPeopleIPage = scientificProPeopleMapper.selectPage(iPage,new QueryWrapper<ScientificProPeople>().lambda()
                 .eq(ScientificProPeople::getProId,proId));
         List<ScientificProPeople> list = proPeopleIPage.getRecords();
@@ -126,6 +141,15 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         for (ScientificProPeople proPeople : list) {
             ProPeopleVO proPeopleVO = new ProPeopleVO();
             BeanUtils.copyProperties(proPeople,proPeopleVO);
+            if (authCode.get(user.getRoleId()).contains("deletePeople")){
+                proPeopleVO.setFlag(1);
+            }
+            if (user.getUserId() == proPeople.getUserId()){
+                proPeopleVO.setUserFlag(1);
+            }
+            if (user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId()).contains("audit")){
+                proPeopleVO.setAuditFlag(1);
+            }
             proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
             proPeopleVOS.add(proPeopleVO);
         }

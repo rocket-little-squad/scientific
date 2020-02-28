@@ -265,7 +265,6 @@ public class ScientificController {
         /**
          * 添加计算标准
          *
-         * @param scientificInfoConf
          * @return
          */
         @RequestMapping("/addScientificInfoConf")

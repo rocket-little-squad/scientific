@@ -207,7 +207,7 @@ public class ScientificUserController {
      */
     @RequestMapping("getUserRoleAuth")
     public Object queryRoleAuth(){
-        return authServiceImpl.queryRoleAuth();
+        return RepResult.repResult(0,"",authServiceImpl.queryRoleAuth());
     }
 
 

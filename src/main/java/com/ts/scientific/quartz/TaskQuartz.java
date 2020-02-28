@@ -113,6 +113,21 @@ public class TaskQuartz {
             }
     }
 
+    //@Scheduled(cron = "0/10 * * * * ?")
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTaskPro(){
+        List<ScientificPro> scientificPros = scientificProMapper.selectList(new QueryWrapper<ScientificPro>().lambda()
+                .eq(ScientificPro::getProStatus,1));
+        for (ScientificPro pro : scientificPros) {
+            if (pro.getEndTime().isBefore(LocalDate.now())){
+                pro.setProStatus(4);
+                scientificProMapper.update(pro,new QueryWrapper<ScientificPro>().lambda()
+                        .eq(ScientificPro::getProId,pro.getProId()));
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
         String [] a = {"1","2"};
         System.out.println(a.length);
