@@ -18,4 +18,6 @@ public class StatisticsDetailDto implements Serializable {
      */
     private String statistic;
 
+    private Integer userId;
+
 }

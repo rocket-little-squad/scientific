@@ -21,14 +21,17 @@
         <if test="userName != null and userName != ''">
             AND    u.user_name = #{userName}
         </if>
+        <if test="userId != null and userId != ''">
+            AND    u.user_id = #{userId}
+        </if>
         <if test="dimension == 0">
-            GROUP BY statistic ,u.dep_name,u.user_name
+            GROUP BY DATE_FORMAT(s.create_time,'%Y') ,u.dep_name,u.user_name
         </if>
         <if test="dimension == 1">
-            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m')
+            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m'),u.dep_name,u.user_name
         </if>
         <if test="dimension == 2">
-            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d')
+            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d'),u.dep_name,u.user_name
         </if>
         ORDER BY s.score DESC
         <if test="currentPage != null and currentPage !='' or

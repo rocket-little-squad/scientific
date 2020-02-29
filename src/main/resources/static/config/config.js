@@ -23,24 +23,26 @@ $(function () {
         $("#projectInfo").show()
         $("#addProject").show()
     }
-    data.get(roleId).each(function (index,item) {
-        if (item === "projectType"){
-            $("#projectInfo").show()
-            $("#projectType").show();
-        }
-        if (item === "performance"){
-            $("#performance").show();
-        }
-        if (item === "condition"){
-            $("#projectInfo").show()
-            $("#condition").show();
-        }
-        if (item === "project"){
-            $("#project").show();
-        }
-        if (item === "addProject"){
-            $("#addProject").show()
-        }
-    });
+    console.log(data[roleId])
+   for (const item in data[roleId]) {
+       console.log(item)
+       if (data[roleId][item] === "projectType") {
+           $("#projectInfo").show()
+           $("#projectType").show();
+       }
+       if (data[roleId][item]  === "performance") {
+           $("#performance").show();
+       }
+       if (data[roleId][item]  === "condition") {
+           $("#projectInfo").show()
+           $("#condition").show();
+       }
+       if (data[roleId][item]  === "project") {
+           $("#project").show();
+       }
+       if (data[roleId][item]  === "addProject") {
+           $("#addProject").show()
+       }
+   };
 
 })

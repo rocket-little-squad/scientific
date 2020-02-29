@@ -2,15 +2,18 @@ package com.ts.scientific.service.impl;
 
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.StatisticsDetail;
+import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.ScientificExtendMapper;
 import com.ts.scientific.mapper.StatisticsDetailMapper;
 import com.ts.scientific.service.StatisticsDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ts.scientific.util.WebUtils;
 import com.ts.scientific.vo.StatisticsDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,9 +28,16 @@ public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMap
 
     @Autowired
     private ScientificExtendMapper scientificExtendMapper;
+    @Autowired
+    private AuthServiceImpl authServiceImpl;
 
     @Override
     public List<StatisticsDetailDto> getStatistics(StatisticsDetailVO statisticsDetailVO) {
+        Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+        if (user.getRoleId() != 1 && authCode.get(user.getRoleId()) != null && !authCode.get(user.getRoleId()).contains("allPerformance")){
+            statisticsDetailVO.setUserId(user.getUserId());
+        }
         return scientificExtendMapper.getStatistics(statisticsDetailVO);
     }
 }

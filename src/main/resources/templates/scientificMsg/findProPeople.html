@@ -25,6 +25,9 @@
     {{#  if(d.auditFlag == 1){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="audit">审核</a>
     {{#  } }}
+    {{#  if(d.flag == 1){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="ran">排名修改</a>
+    {{#  } }}
 </script>
 <script type="text/html" id="status">
     {{#  if(d.materialsStatus == 1){ }}
@@ -66,7 +69,7 @@
             ,cols: [[
                 {field:'userName', width: tableWidth*0.22, title: '负责人', }
                 ,{field:'materialsStatus', width:tableWidth*0.25, title: '上报状态',toolbar:'#status'}
-                ,{field:'rank', width:tableWidth*0.22, title: '负责人顺序'}
+                ,{field:'rank', width:tableWidth*0.22, title: '项目排名'}
                 ,{field:'rank', width:tableWidth*0.22, title: '操作',toolbar:'#barDemo'}
             ]]
             ,page: true
@@ -115,6 +118,19 @@
                         shade: 0.8,
                         area: ['1000px', '650px'],
                         content: 'findMaterials.html'
+                    });
+                })
+            }else if (obj.event === 'ran'){
+                proId = data.proId;
+                userId = data.userId;
+                layui.use('layer',function () {
+                    layer.open({
+                        type: 2,
+                        title: '修改排名',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['300px', '100px'],
+                        content: 'editRank.html'
                     });
                 })
             }else if(obj.event === 'audit'){
