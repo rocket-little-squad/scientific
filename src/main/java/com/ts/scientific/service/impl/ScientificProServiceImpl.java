@@ -161,6 +161,7 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             if (user.getRoleId()==1 || user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId())!=null && authCode.get(user.getRoleId()).contains("audit")){
                 proPeopleVO.setAuditFlag(1);
             }
+            proPeopleVO.setProStatus(scientificPro.getProStatus());
             proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
             proPeopleVOS.add(proPeopleVO);
         }
