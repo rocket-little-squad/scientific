@@ -1,5 +1,6 @@
 package com.ts.scientific.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, ScientificPro> implements ScientificProService {
@@ -56,8 +58,9 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         }else {
             proVO.setProStatus(2);
         }
-        proVO.setProNo(System.getSecurityManager().toString());
+        proVO.setProNo(String.valueOf(System.currentTimeMillis()));
         proVO.setCreateTime(now);
+        proVO.setCreateId(user.getUserId());
         proVO.setCreateName(user.getUserName());
         BeanUtils.copyProperties(proVO,scientificPro);
         this.save(scientificPro);
@@ -85,16 +88,24 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
 
         Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
         User user = (User) WebUtils.getHttpSession().getAttribute("user");
-        if (authCode.get(user.getRoleId()).contains("all")){
-            ///proPeopleVO.setFlag(1);
-        }
+//        String aCode=
+//        if (authCode.get(user.getRoleId())!=null){
+//            ///proPeopleVO.setFlag(1);
+//              authCode.get(user.getRoleId()).contains("allPro");
+//        }
         IPage<ScientificPro> page = new Page<>();
         page.setCurrent(findProVO.getCurrent());
         page.setSize(findProVO.getSize());
         List<ProSeeVO> proSeeVOS = new ArrayList<>();
-        QueryWrapper<ScientificPro> qw = new QueryWrapper<>();
+        List<ScientificProPeople>  proPeopleIds =  scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getUserId,user.getUserId()));
+        LambdaQueryWrapper<ScientificPro> qw = new LambdaQueryWrapper<>();
         if (findProVO.getProjectTypeId()!=null){
-            qw.eq("project_type_id",findProVO.getProjectTypeId());
+            qw.eq(ScientificPro::getProjectTypeId,findProVO.getProjectTypeId());
+        }
+        if (user.getRoleId() != 1) {
+            qw.and(w -> w.eq(ScientificPro::getCreateId, user.getUserId()).or().in(proPeopleIds != null && proPeopleIds.size() > 0, ScientificPro::getProId, proPeopleIds.stream().map(ScientificProPeople::getProId).collect(Collectors.toList())));
+            //qw.in(proPeopleIds != null && proPeopleIds.size() > 0, ScientificPro::getProId, proPeopleIds.stream().map(ScientificProPeople::getProId).collect(Collectors.toList()));
         }
         List<ScientificPro> scientificPros = scientificProMapper.selectPage(page,qw).getRecords();
         ProSeeVO proSeeVO = null;
@@ -141,15 +152,16 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         for (ScientificProPeople proPeople : list) {
             ProPeopleVO proPeopleVO = new ProPeopleVO();
             BeanUtils.copyProperties(proPeople,proPeopleVO);
-            if (authCode.get(user.getRoleId()).contains("deletePeople")){
+            if (user.getRoleId()==1 || user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId())!=null && authCode.get(user.getRoleId()).contains("deletePeople")){
                 proPeopleVO.setFlag(1);
             }
-            if (user.getUserId() == proPeople.getUserId()){
+            if (user.getRoleId()==1 || user.getUserId() == proPeople.getUserId()){
                 proPeopleVO.setUserFlag(1);
             }
-            if (user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId()).contains("audit")){
+            if (user.getRoleId()==1 || user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId())!=null && authCode.get(user.getRoleId()).contains("audit")){
                 proPeopleVO.setAuditFlag(1);
             }
+            proPeopleVO.setProStatus(scientificPro.getProStatus());
             proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
             proPeopleVOS.add(proPeopleVO);
         }

@@ -12,6 +12,7 @@ import com.ts.scientific.mapper.ScientificProPeopleMapper;
 import com.ts.scientific.service.StatisticsDetailService;
 import com.ts.scientific.service.impl.*;
 import com.ts.scientific.util.RepResult;
+import com.ts.scientific.util.WebUtils;
 import com.ts.scientific.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -190,7 +192,18 @@ public class ScientificController {
         public Object getCurrentProPeople(int current,int size,Integer proId){
                 return scientificProServiceImpl.getCurrentProPeople(current,size,proId);
         }
-
+    /**
+     * 修改排名
+     */
+    @GetMapping("/editRank")
+    public Object editRank(Integer proId,Integer userId,Integer rank){
+        ScientificProPeople scientificProPeople = new ScientificProPeople();
+        scientificProPeople.setRank(rank);
+        scientificProPeopleMapper.update(scientificProPeople,new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getProId,proId)
+                .eq(ScientificProPeople::getUserId,userId));
+        return RepResult.repResult(0,"成功",null);
+    }
 
     /**
      * 材料审核

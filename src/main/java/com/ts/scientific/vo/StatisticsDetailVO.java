@@ -16,4 +16,6 @@ public class StatisticsDetailVO implements Serializable {
     private Integer currentPage;
 
     private Integer pageSize;
+
+    private Integer userId;
 }
