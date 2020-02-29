@@ -55,20 +55,20 @@ public class TaskQuartz {
                 Period per = Period.between(scientificPro.getStartTime(), scientificPro.getEndTime());
                 if (scientificInfo.getRuleTime() == 1) {
                     int year = period.getYears();
-                    score = scientificPro.getScore()
-                            .divide(new BigDecimal(per.getYears()), 2, RoundingMode.HALF_UP)
+                    score = new BigDecimal(per.getYears())
+                            .divide(scientificPro.getScore(), 2, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(year));
                 }
                 if (scientificInfo.getRuleTime() == 2) {
                     int months = period.getMonths();
-                    score = scientificPro.getScore()
-                            .divide(new BigDecimal(per.getMonths()), 2, RoundingMode.HALF_UP)
+                    score = new BigDecimal(per.getMonths())
+                            .divide(scientificPro.getScore(), 2, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(months));
                 }
                 if (scientificInfo.getRuleTime() == 3) {
                     int day = period.getMonths();
-                    score = scientificPro.getScore()
-                            .divide(new BigDecimal(per.getDays()), 2, RoundingMode.HALF_UP)
+                    score = new BigDecimal(per.getDays())
+                            .divide(scientificPro.getScore(), 2, RoundingMode.HALF_UP)
                             .multiply(new BigDecimal(day));
                 }
             }

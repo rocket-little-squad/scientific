@@ -3,6 +3,7 @@ package com.ts.scientific.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ts.scientific.config.BizException;
 import com.ts.scientific.dto.ScientificInfoDto;
 import com.ts.scientific.entity.ScientificInfo;
 import com.ts.scientific.entity.ScientificInfoCentre;
@@ -60,6 +61,18 @@ public class ScientificInfoServiceImpl extends ServiceImpl<ScientificInfoMapper,
 
     @Transactional
     public Object insertSelective(ScientificInfo request){
+        try {
+            String[] ruleStr = request.getRule().split(",");
+            int sum = 0;
+            for (String s : ruleStr) {
+                sum += Integer.valueOf(s.replace("%", ""));
+            }
+            if (sum != 100) {
+                throw new BizException("权重规则合起来要为1");
+            }
+        }catch (Exception e){
+            throw new BizException("权重规则错误");
+        }
         ScientificInfo scientificInfo = new ScientificInfo();
         BeanUtils.copyProperties(request,scientificInfo);
         scientificInfo.setCreateName(WebUtils.getCurrentUserName());
