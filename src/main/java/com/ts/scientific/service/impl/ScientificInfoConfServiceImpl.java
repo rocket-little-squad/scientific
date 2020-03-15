@@ -45,7 +45,8 @@ public class ScientificInfoConfServiceImpl extends ServiceImpl<ScientificInfoCon
     @Override
     public Object getCalculateIds(Integer projectTypeId) {
        List<ScientificInfoCentre>  centres = scientificInfoCentreMapper.selectList(new QueryWrapper<ScientificInfoCentre>().lambda()
-                .eq(ScientificInfoCentre::getProjectTypeId,projectTypeId));
+                .eq(ScientificInfoCentre::getProjectTypeId,projectTypeId)
+                .eq(ScientificInfoCentre::getDelFlag, 0));
         List<ScientificInfoConf>  scientificInfoConfList = new ArrayList<>();
        if (!centres.isEmpty()){
             List<Integer> id = centres.stream().map(ScientificInfoCentre::getCalculateId).collect(Collectors.toList());

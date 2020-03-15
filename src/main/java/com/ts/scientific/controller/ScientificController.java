@@ -89,7 +89,7 @@ public class ScientificController {
         @PostMapping("/uploadFile")
         public Object uploadFile(MultipartFile file){
                 JSONObject jsonObject = new JSONObject();
-                String path = "D:/apache-tomcat-8.5.50-file/webapps/file";
+                String path = "F:/bysj/apache-tomcat-8.5.50-file/webapps/file";
                 if (!file.isEmpty()) {
                      String srcName =   UUID.randomUUID()+file.getOriginalFilename();
                         File newPath = new File(path, srcName);
@@ -168,7 +168,7 @@ public class ScientificController {
          */
         @GetMapping("/getType")
         public Object getType(){
-             return RepResult.repResult(0,"成功",scientificInfoServiceImpl.list());
+             return RepResult.repResult(0,"成功",scientificInfoServiceImpl.list(new QueryWrapper<ScientificInfo>().lambda().eq(ScientificInfo::getDelFlag, 0)));
         }
 
         /**

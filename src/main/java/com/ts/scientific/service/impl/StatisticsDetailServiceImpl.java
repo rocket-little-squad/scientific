@@ -35,7 +35,7 @@ public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMap
     public List<StatisticsDetailDto> getStatistics(StatisticsDetailVO statisticsDetailVO) {
         Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
         User user = (User) WebUtils.getHttpSession().getAttribute("user");
-        if (user.getRoleId() != 1 && authCode.get(user.getRoleId()) != null && !authCode.get(user.getRoleId()).contains("allPerformance")){
+        if (user.getRoleId() != 1 || authCode.get(user.getRoleId()) != null && !authCode.get(user.getRoleId()).contains("allPerformance")){
             statisticsDetailVO.setUserId(user.getUserId());
         }
         return scientificExtendMapper.getStatistics(statisticsDetailVO);

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mchange.lang.IntegerUtils;
+import com.ts.scientific.config.BizException;
 import com.ts.scientific.entity.*;
 import com.ts.scientific.mapper.*;
 import com.ts.scientific.service.ScientificProService;
@@ -55,8 +56,9 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         LocalDate now = LocalDate.now();
         if (now.isBefore(proVO.getStartTime())){
             proVO.setProStatus(1);
-        }else {
-            proVO.setProStatus(2);
+        }
+        if (now.isAfter(proVO.getEndTime())){
+           throw new BizException("结束时间不能小于当前时间");
         }
         proVO.setProNo(String.valueOf(System.currentTimeMillis()));
         proVO.setCreateTime(now);
@@ -124,12 +126,12 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             List<ScientificProPeople> list = scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
                     .eq(ScientificProPeople::getProId,pro.getProId()));
             List<ProPeopleVO> proPeopleVOS = new ArrayList<>();
-            for (ScientificProPeople proPeople : list) {
-                ProPeopleVO proPeopleVO = new ProPeopleVO();
-                BeanUtils.copyProperties(proPeople,proPeopleVO);
-                proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
-                proPeopleVOS.add(proPeopleVO);
-            }
+//            for (ScientificProPeople proPeople : list) {
+//                ProPeopleVO proPeopleVO = new ProPeopleVO();
+//                BeanUtils.copyProperties(proPeople,proPeopleVO);
+//                proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
+//                proPeopleVOS.add(proPeopleVO);
+//            }
             proSeeVO.setProPeopleVOS(proPeopleVOS);
             proSeeVOS.add(proSeeVO);
         }
