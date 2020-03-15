@@ -69,5 +69,10 @@ public class User implements Serializable {
      */
     private Integer roleId;
 
+    /**
+     * 是否删除 0是 1否
+     */
+    private Integer delFlag;
+
 
 }

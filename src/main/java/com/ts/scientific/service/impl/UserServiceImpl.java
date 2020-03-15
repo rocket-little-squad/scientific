@@ -63,7 +63,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Object queryAllUser(UserVo userVo) {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
                 .eq(StringUtils.isNotBlank(userVo.getPhone()), User::getPhone, userVo.getPhone())
-                .eq(StringUtils.isNotBlank(userVo.getUserName()), User::getUserName, userVo.getUserName());
+                .eq(StringUtils.isNotBlank(userVo.getUserName()), User::getUserName, userVo.getUserName())
+                .eq(User::getDelFlag,0);
         IPage<User> userPage = userMapper.selectPage(new Page<>(userVo.getPage(),userVo.getLimit()), queryWrapper);
         List<UserDto> dtoList = userPage.getRecords().stream().map(user -> {
             UserDto userDto = new UserDto();
@@ -130,7 +131,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (null == id) {
             throw new BizException("删除id为空");
         }
-        if (1 != userMapper.deleteById(id)) {
+        User user_name = userMapper.selectOne(new QueryWrapper<User>().eq("user_name", WebUtils.getCurrentUserName()));
+        user_name.setDelFlag(1);
+        if (1 != userMapper.updateById(user_name)) {
             throw new BizException("删除用户数据失败");
         }
         return RepResult.repResult(0, "删除成功", null);
