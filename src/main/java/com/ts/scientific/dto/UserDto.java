@@ -54,4 +54,19 @@ public class UserDto implements Serializable {
      * 角色id
      */
     private Integer roleId;
+
+    /**
+     * 部门id
+     */
+    private Integer depId;
+
+    /**
+     * 职称id
+     */
+    private Long titleId;
+    /**
+     * 职称名称
+     */
+    private String titleName;
+
 }

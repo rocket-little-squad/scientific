@@ -23,6 +23,7 @@ $(function () {
         $("#project").show();
         $("#projectInfo").show()
         $("#addProject").show()
+        $("#detail").show()
     }
     console.log(data[roleId])
    for (const item in data[roleId]) {

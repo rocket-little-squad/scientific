@@ -100,10 +100,22 @@
 
         <div class="layui-form-item">
             <div class="layui-inline">
-            <label class="layui-form-label">部门名称</label>
-            <div class="layui-input-inline">
-                <input type="text" name="depName" id="depName"
-                       autocomplete="off" placeholder="请输入部门名称" class="layui-input">
+                <label class="layui-form-label">分配部门</label>
+                <div class="layui-input-inline">
+                    <select name="depId" id="depId" lay-verify="required" lay-filter='depId'>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">分配职称</label>
+                <div class="layui-input-inline">
+                    <select name="titleId" id="titleId" lay-verify="required" lay-filter='titleId'>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -160,6 +172,7 @@
                 {field:'userName', width: 100, title: '用户名' },
                 {field:'email', width:200, title: '邮箱'},
                 {field:'depName', width:140, title: '部门名字'},
+                {field:'titleName', width:140, title: '职称名字'},
                 {field:'createName', width:130, title: '创建人'},
                 {field:'password', width:100, title: '密码'},
                 {field:'roleName', title: '角色', width: 150 }, //minWidth：局部定义当前单元格的最小宽度
@@ -219,7 +232,7 @@
                 type:1,
                 title:'添加用户',
                 content:$("#addOrUpdateView"),
-                area:['400px','500px'],
+                area:['400px','550px'],
                 skin:'layui-layer-molv',
                 maxmin:true,
                 success:function(layero, index){
@@ -256,12 +269,13 @@
                 type:1,
                 title:'修改用户',
                 content:$("#addOrUpdateView"),
-                area:['400px','500px'],
+                area:['400px','550px'],
                 skin:'layui-layer-molv',
                 maxmin:true,
                 success:function(layero, index){
                     //移除下拉列表展开的样式
                     $("#accordionDeptid").removeClass("layui-show layui-anim layui-anim-upbit");
+                    console.log(data)
                     form.val("dataFrm",data);
                     url=dev+"ScientificUser/updateUser";
                 }
@@ -290,6 +304,32 @@
                 html+="<option value="+item.roleId+">"+item.roleName+"</option>"
             });
             providerId.html(html);
+            form.render("select");
+        });
+
+        //初始化查询部门的下拉列表
+        $.get(dev+"ScientificUser/getDepartment",function(obj){
+            obj = obj.data.data;
+            var provider = $("#depId");
+            var html="<option value=''>请选择部门</option>";
+            $.each(obj,function(index,item){
+
+                html+="<option value="+item.id+">"+item.depName+"</option>"
+            });
+            provider.html(html);
+            form.render("select");
+        });
+
+        //初始化查询职称的下拉列表
+        $.get(dev+"ScientificUser/getTitle",function(obj){
+            obj = obj.data.data;
+            var provider = $("#titleId");
+            var html="<option value=''>请选择职称</option>";
+            $.each(obj,function(index,item){
+
+                html+="<option value="+item.id+">"+item.titleName+"</option>"
+            });
+            provider.html(html);
             form.render("select");
         })
 

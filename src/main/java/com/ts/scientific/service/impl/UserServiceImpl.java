@@ -8,9 +8,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ts.scientific.config.BizException;
 import com.ts.scientific.dto.UserDto;
-import com.ts.scientific.entity.Role;
-import com.ts.scientific.entity.User;
+import com.ts.scientific.entity.*;
+import com.ts.scientific.mapper.DepartmentMapper;
 import com.ts.scientific.mapper.RoleMapper;
+import com.ts.scientific.mapper.TitleMapper;
 import com.ts.scientific.mapper.UserMapper;
 import com.ts.scientific.service.UserService;
 import com.ts.scientific.util.RepResult;
@@ -26,7 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private DepartmentMapper departmentMapper;
+    @Resource
+    private TitleMapper titleMapper;
 
 
     @Override
@@ -70,7 +77,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             UserDto userDto = new UserDto();
             BeanUtils.copyProperties(user,userDto);
             Role role = roleMapper.selectById(user.getRoleId());
+            Department department = departmentMapper.selectById(user.getDepId());
+            Title title = titleMapper.selectById(user.getTitleId());
             userDto.setRoleName(role.getRoleName());
+            userDto.setDepName(department.getDepName());
+            userDto.setDepId(department.getId());
+            userDto.setTitleName(title.getTitleName());
             return userDto;
         }).collect(Collectors.toList());
         return RepResult.repResult(0, "查询成功", dtoList, (int)userPage.getTotal());
@@ -92,6 +104,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (1 != userMapper.insert(record)) {
             throw new BizException("添加用户数据失败");
         }
+        Department department = departmentMapper.selectById(record.getDepId());
+        Integer num = department.getNum();
+        department.setNum(num+1);
+        departmentMapper.updateById(department);
 
         return RepResult.repResult(0, "添加成功", null);
     }
@@ -101,9 +117,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (null == record) {
             throw new BizException("修改数据为空");
         }
+        User user = userMapper.selectById(record.getUserId());
+        Department department = departmentMapper.selectById(record.getDepId());
+        Department departmentT = departmentMapper.selectById(user.getDepId());
+        Integer num = department.getNum();
+        departmentT.setNum(departmentT.getNum()-1);
+        department.setNum(num+1);
+        departmentMapper.updateById(department);
+        departmentMapper.updateById(departmentT);
         if (1 != userMapper.updateById(record)) {
             throw new BizException("修改用户数据失败");
         }
+
         return RepResult.repResult(0, "修改成功", null);
     }
 
@@ -157,4 +182,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return RepResult.repResult(0,"成功",proUserVOS,count);
     }
+
+
+
+    public Object getDepartment(){
+
+        List<Department> departments = departmentMapper.selectList(new QueryWrapper<Department>().lambda()
+                .groupBy(Department::getDepName));
+
+        return RepResult.repResult(0, "查询成功", departments);
+    }
+
+
+    public Object getTitle(){
+
+        List<Title> departments = titleMapper.selectList(new QueryWrapper<Title>().lambda()
+                .groupBy(Title::getTitleName));
+
+        return RepResult.repResult(0, "查询成功", departments);
+    }
+
+    public Object getUser(){
+
+        List<User> departments = userMapper.selectList(new QueryWrapper<>());
+
+        return RepResult.repResult(0, "查询成功", departments);
+    }
+
 }

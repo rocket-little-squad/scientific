@@ -1,16 +1,16 @@
 package com.ts.scientific.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDate;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 角色表
+ * 
  * </p>
  *
  * @author 
@@ -19,21 +19,17 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class Role implements Serializable {
+public class Title implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "role_id", type = IdType.AUTO)
-    private Integer roleId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     /**
-     * 角色名称
+     * 职称名
      */
-    private String roleName;
-
-    private LocalDate createTime;
-
-    private String createName;
+    private String titleName;
 
 
 }

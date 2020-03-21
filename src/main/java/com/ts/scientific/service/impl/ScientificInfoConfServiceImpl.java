@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ts.scientific.dto.ProDetileDto;
 import com.ts.scientific.entity.*;
-import com.ts.scientific.mapper.ScientificInfoCentreMapper;
-import com.ts.scientific.mapper.ScientificInfoConfMapper;
-import com.ts.scientific.mapper.ScientificProMapper;
+import com.ts.scientific.mapper.*;
 import com.ts.scientific.service.ScientificInfoConfService;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.util.WebUtils;
+import com.ts.scientific.vo.ProDetileVo;
 import com.ts.scientific.vo.ScientificInfoConfVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -41,6 +42,10 @@ public class ScientificInfoConfServiceImpl extends ServiceImpl<ScientificInfoCon
     private ScientificInfoConfMapper scientificInfoConfMapper;
     @Resource
     private ScientificProMapper scientificProMapper;
+    @Resource
+    private StatisticsDetailMapper statisticsDetailMapper;
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public Object getCalculateIds(Integer projectTypeId) {
@@ -117,6 +122,20 @@ public class ScientificInfoConfServiceImpl extends ServiceImpl<ScientificInfoCon
             list.add(map);
         }
         return RepResult.repResult(0, "查询成功", list);
+    }
+
+    public Object loadDetile(ProDetileVo proDetileVo){
+        LambdaQueryWrapper<StatisticsDetail> queryWrapper = new LambdaQueryWrapper<StatisticsDetail>()
+                .eq(null!=proDetileVo.getUserId(),StatisticsDetail::getUserId,proDetileVo.getUserId());
+        Page<StatisticsDetail> statisticsDetailPage = statisticsDetailMapper.selectPage(new Page<>(proDetileVo.getPage(), proDetileVo.getLimit()), queryWrapper);
+        List<ProDetileDto> collect = statisticsDetailPage.getRecords().stream().map(detail -> {
+            ProDetileDto proDetileDto = new ProDetileDto();
+            BeanUtils.copyProperties(detail,proDetileDto);
+            User user = userMapper.selectById(detail.getUserId());
+            proDetileDto.setUserName(user.getUserName());
+            return proDetileDto;
+        }).collect(Collectors.toList());
+        return RepResult.repResult(0,"成功",collect,(int)statisticsDetailPage.getTotal());
     }
 
 }

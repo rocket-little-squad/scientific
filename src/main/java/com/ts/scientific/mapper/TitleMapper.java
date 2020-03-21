@@ -1,6 +1,6 @@
 package com.ts.scientific.mapper;
 
-import com.ts.scientific.entity.ScientificProPeopleInfo;
+import com.ts.scientific.entity.Title;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 
  * @since 2020-03-21
  */
-public interface ScientificProPeopleInfoMapper extends BaseMapper<ScientificProPeopleInfo> {
+public interface TitleMapper extends BaseMapper<Title> {
 
 }

@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-03-15
+ * @since 2020-03-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -37,7 +37,7 @@ public class User implements Serializable {
     /**
      * 部门名字
      */
-    private String depName;
+    private String depId;
 
     /**
      * 创建时间
@@ -73,6 +73,11 @@ public class User implements Serializable {
      * 是否删除 0是 1否
      */
     private Integer delFlag;
+
+    /**
+     * 职称
+     */
+    private Long titleId;
 
 
 }

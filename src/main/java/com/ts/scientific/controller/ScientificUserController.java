@@ -1,36 +1,20 @@
 package com.ts.scientific.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.ts.scientific.entity.Auth;
-import com.ts.scientific.entity.Centre;
-import com.ts.scientific.entity.Role;
-import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.AuthMapper;
 import com.ts.scientific.mapper.CentreMapper;
 import com.ts.scientific.mapper.RoleMapper;
 import com.ts.scientific.mapper.UserMapper;
-import com.ts.scientific.service.impl.AuthServiceImpl;
-import com.ts.scientific.service.impl.RoleServiceImpl;
-import com.ts.scientific.service.impl.UserServiceImpl;
+import com.ts.scientific.service.impl.*;
 import com.ts.scientific.util.RepResult;
-import com.ts.scientific.util.WebUtils;
-import com.ts.scientific.vo.AuthVo;
-import com.ts.scientific.vo.RoleVo;
-import com.ts.scientific.vo.UserVo;
+import com.ts.scientific.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -49,6 +33,12 @@ public class ScientificUserController {
 
     @Autowired
     private AuthServiceImpl authServiceImpl;
+
+    @Resource
+    private TitleServiceImpl titleService;
+
+    @Resource
+    private DepartmentServiceImpl departmentService;
 
     @Resource
     private AuthMapper authMapper;
@@ -201,6 +191,95 @@ public class ScientificUserController {
 
     //==================权限结束===================
 
+
+
+    //==================职称开始=========================
+
+    /**
+     * 加载职称列表数据
+     */
+    @RequestMapping("/loadAllTitle")
+    public Object loadAllTitle(TitleVo titleVo) {
+        return titleService.queryAllTitle(titleVo);
+    }
+
+
+    /**
+     * 添加职称
+     *
+     * @param titleVo
+     * @return
+     */
+    @RequestMapping("/addTitle")
+    public Object addTitle(TitleVo titleVo) {
+        return titleService.insertSelective(titleVo);
+    }
+
+    /**
+     * 修改职称
+     *
+     * @param titleVo
+     * @return
+     */
+    @RequestMapping("/updateTitle")
+    public Object updateTitle(TitleVo titleVo) {
+        return titleService.updateByPrimaryKeySelective(titleVo);
+    }
+
+    /**
+     * 删除职称
+     */
+    @RequestMapping("/deleteTitle")
+    public Object deleteTitle(String id) {
+        return titleService.deleteByPrimaryKey(id);
+    }
+
+    //=================职称结束==================
+
+
+    //==================部门开始=========================
+
+    /**
+     * 加载部门列表数据
+     */
+    @RequestMapping("/loadAllDepartment")
+    public Object loadAllDepartment(DepartmentVo departmentVo) {
+        return departmentService.queryAllDepartment(departmentVo);
+    }
+
+
+    /**
+     * 添加部门
+     *
+     * @param departmentVo
+     * @return
+     */
+    @RequestMapping("/addDepartment")
+    public Object addDepartment(DepartmentVo departmentVo) {
+        return departmentService.insertSelective(departmentVo);
+    }
+
+    /**
+     * 修改部门
+     *
+     * @param departmentVo
+     * @return
+     */
+    @RequestMapping("/updateDepartment")
+    public Object updateDepartment(DepartmentVo departmentVo) {
+        return departmentService.updateByPrimaryKeySelective(departmentVo);
+    }
+
+    /**
+     * 删除部门
+     */
+    @RequestMapping("/deleteDepartment")
+    public Object deleteDepartment(String id) {
+        return departmentService.deleteByPrimaryKey(id);
+    }
+
+    //=================部门结束==================
+
     /**
      * 获得用户角色与权限
      * @return
@@ -210,6 +289,35 @@ public class ScientificUserController {
         return RepResult.repResult(0,"",authServiceImpl.queryRoleAuth());
     }
 
+
+
+    /**
+     * 获得所有部门
+     * @return
+     */
+    @RequestMapping("getDepartment")
+    public Object getDepartment(){
+        return RepResult.repResult(0,"",userServiceImpl.getDepartment());
+    }
+
+    /**
+     * 获得所有职称
+     * @return
+     */
+    @RequestMapping("getTitle")
+    public Object getTitle(){
+        return RepResult.repResult(0,"",userServiceImpl.getTitle());
+    }
+
+
+    /**
+     * 获得所有用户
+     * @return
+     */
+    @RequestMapping("getUser")
+    public Object getUser(){
+        return RepResult.repResult(0,"",userServiceImpl.getUser());
+    }
 
     /**
      * 修改密码

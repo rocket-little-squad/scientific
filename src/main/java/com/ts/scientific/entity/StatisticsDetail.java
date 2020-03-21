@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-03-15
+ * @since 2020-03-21
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,6 +40,11 @@ public class StatisticsDetail implements Serializable {
     private BigDecimal score;
 
     private Integer userId;
+
+    /**
+     * 项目id
+     */
+    private Integer proId;
 
 
 }

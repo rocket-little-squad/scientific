@@ -1,16 +1,16 @@
 package com.ts.scientific.mapper;
 
-import com.ts.scientific.entity.ScientificPro;
+import com.ts.scientific.entity.Department;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * 部门表 Mapper 接口
  * </p>
  *
  * @author 
  * @since 2020-03-21
  */
-public interface ScientificProMapper extends BaseMapper<ScientificPro> {
+public interface DepartmentMapper extends BaseMapper<Department> {
 
 }

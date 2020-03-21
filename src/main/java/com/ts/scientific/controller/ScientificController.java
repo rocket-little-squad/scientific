@@ -314,6 +314,13 @@ public class ScientificController {
 
 
 
+    /**
+     * 加载用户项目详情列表数据
+     */
+    @RequestMapping("/loadDetile")
+    public Object loadDetile(ProDetileVo proDetileVo) {
+        return scientificInfoConfServiceImpl.loadDetile(proDetileVo);
+    }
 
 
         //===========科研信息结束===============
