@@ -131,6 +131,8 @@ public class ScientificInfoConfServiceImpl extends ServiceImpl<ScientificInfoCon
         List<ProDetileDto> collect = statisticsDetailPage.getRecords().stream().map(detail -> {
             ProDetileDto proDetileDto = new ProDetileDto();
             BeanUtils.copyProperties(detail,proDetileDto);
+            proDetileDto.setProNo(scientificProMapper.selectOne(new QueryWrapper<ScientificPro>().lambda()
+                    .eq(ScientificPro::getProId,proDetileDto.getProId())).getProNo());
             User user = userMapper.selectById(detail.getUserId());
             proDetileDto.setUserName(user.getUserName());
             return proDetileDto;

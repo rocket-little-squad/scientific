@@ -28,6 +28,10 @@ public class ProDetileDto {
      */
     private Integer proId;
 
+    /**
+     * 项目id
+     */
+    private String proNo;
 
     private String userName;
 }

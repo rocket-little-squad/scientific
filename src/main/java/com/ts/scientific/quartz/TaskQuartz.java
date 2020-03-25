@@ -35,7 +35,7 @@ public class TaskQuartz {
     @Resource
     private StatisticsDetailMapper statisticsDetailMapper;
     //最重要的就是这个先关掉 每天夜晚12点就会对已经完成的项目做出积分分配 我要慢慢的走下 按照权重和时间 暂时设置为10秒
-    @Scheduled(cron = "0/10 * * * * ?")
+    //@Scheduled(cron = "0/10 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void task(){
       List<ScientificPro> scientificPros = scientificProMapper.selectList(new QueryWrapper<ScientificPro>().lambda()
