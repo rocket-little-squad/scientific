@@ -82,6 +82,7 @@ public class TaskQuartz {
                         detail.setCreateTime(LocalDate.now());
                         detail.setScore(scientificPro.getScore().multiply(rule));
                         detail.setUserId(people.getUserId());
+                        detail.setProId(people.getProId());
                         statisticsDetailMapper.insert(detail);
                         if ( i == peoples.size()-1) {
                             break;
@@ -93,6 +94,7 @@ public class TaskQuartz {
                         StatisticsDetail detail = new StatisticsDetail();
                         detail.setCreateTime(LocalDate.now());
                         detail.setUserId(people.getUserId());
+                        detail.setProId(people.getProId());
                         //BigDecimal rule = new BigDecimal(1);
                         if ( i < rules.length-1) {
                             BigDecimal r = new BigDecimal(rules[i].replace("%", ""))
