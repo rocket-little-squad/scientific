@@ -7,6 +7,9 @@
     <script src="./layui/layui.js"></script>
     <script src="./js/jquery-3.4.1.js"></script>
     <script src="./config/config.js"></script>
+    <link rel="shortcut icon" href="./favicons.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/weadmin.css">
     <script src="./layui/layui.all.js"></script>
 </head>
 <style>
@@ -20,9 +23,10 @@
         background-size:cover;
     }
 </style>
-<body >
-<div id="log">
-    <h1 style="padding-left: 60px;padding-bottom: 20px">教师科研积分系统</h1>
+<body class="login-bg">
+    <div class="login">
+        <div class="message">教师科研管理系统</div>
+        <div id="darkbannerwrap"></div>
     <form class="layui-form">
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱账号:</label>
@@ -46,16 +50,18 @@
 <!--        </span>-->
 <!--        </div>-->
         <div class="layui-form-item" >
-            <button id="login" type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">登录</button>
+            <button id="logins" type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">登录</button>
         </div>
     </form>
-</div>
+    </div>
 <script>
 
-
+    layui.extend({
+        admin: '{/}./static/js/admin'
+    });
     layui.use('layer',function () {
         var  layer = layui.layer
-        $("#login").click(function () {
+        $("#logins").click(function () {
                 var email = $("#email").val();
                 var password=$("#password").val();
                 var   checkCode=$("#yz").val();
