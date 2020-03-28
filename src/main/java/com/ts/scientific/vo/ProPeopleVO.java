@@ -15,6 +15,8 @@ public class ProPeopleVO extends ScientificProPeople {
     private Integer userFlag = 0;
     //审核标识
     private Integer auditFlag = 0;
+    //审核标识
+    private Integer seeFlag = 0;
     //项目状态
     private Integer proStatus;
 }
