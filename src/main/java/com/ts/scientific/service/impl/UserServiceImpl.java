@@ -178,6 +178,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             BeanUtils.copyProperties(user,proUserVO);
             proUserVO.setRoleName(roleMapper.selectOne(new QueryWrapper<Role>().lambda()
                     .eq(Role::getRoleId,user.getRoleId())).getRoleName());
+            Department department = departmentMapper.selectById(user.getDepId());
+            proUserVO.setDepName(department.getDepName());
             proUserVOS.add(proUserVO);
         }
         return RepResult.repResult(0,"成功",proUserVOS,count);

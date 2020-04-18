@@ -8,4 +8,5 @@ public class ProUserVO extends User {
 
     private String roleName;
 
+    private String depName;
 }
