@@ -44,6 +44,14 @@
             <input type="text" id="proTimeEnd" required     autocomplete="off"  placeholder="请输入项目结束时间" class="layui-input">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">部门查询:</label>
+        <div  class="layui-input-block" style="width: 300px">
+            <select id="dep" lay-filter="depCondition" required>
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
     <div id="info" lay-filter="demo"></div>
     <div class="layui-form-item" >
         <button id="confirm"  type="button"  style="margin-left:100px;padding-left: 80px;padding-right: 80px" class="layui-btn">确认</button>
@@ -92,7 +100,7 @@
         table.on('tool(demo)', function(obj){
             var data = obj.data;
             if(obj.event === 'del'){
-                layer.confirm('确定选择第'+ix+'位合作人吗?', function(index){
+                layer.confirm('确定选择第'+ix+'位参与者吗?', function(index){
                     userId.push(data.userId)
                     obj.del();
                     ix++;
@@ -133,6 +141,27 @@
                 form.render();
             }
         })
+
+        layui.use('form', function () {
+            var form = layui.form;
+            $.ajax({
+                type: "get",
+                url: dev + "scientific/getAlldept",
+                async: false,
+                data: {},
+                success: function (res) {
+                    var data = res.data;
+                    $.each(data, function (index, item) {
+                        $("#dep")
+                            .append(
+                                "<option value='" + item.id + "'>"
+                                + item.depName + "</option>");
+                    })
+                    //form.render(null, 'merchant');
+                    form.render();
+                }
+            })
+        })
         form.on('select(type)', function(data){
             $("#proCondition").empty();
             $.ajax({
@@ -159,9 +188,20 @@
          var  score =  $(data.elem).find("option:selected").attr("name")
             $("#proScore").val(score)
         })
+        form.on('select(depCondition)', function(data){
+            var  depId =  data.value;
+            console.log(data)
+            find(depId);
+        })
     })
 
 
+    function find(depId){
+        layui.table.reload('info',{
+            where: {
+                depId:depId
+            }});
+    }
     layui.use('laydate', function(){
         var laydate = layui.laydate;
         laydate.render({

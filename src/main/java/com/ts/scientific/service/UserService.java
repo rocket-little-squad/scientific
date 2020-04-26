@@ -62,4 +62,9 @@ public interface UserService extends IService<User> {
      * 获取所有的用户
      */
     Object getAllUser(UserAllVO userAllVO);
+
+    /**
+     *
+     */
+    Object getAlldept();
 }

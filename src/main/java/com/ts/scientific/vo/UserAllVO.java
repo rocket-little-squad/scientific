@@ -16,5 +16,5 @@ public class UserAllVO implements Serializable {
 
     private List<Integer> userIds;
 
-
+    private Integer depId;
 }

@@ -3,6 +3,7 @@ package com.ts.scientific.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -170,7 +169,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
        if (userAllVO.getUserIds().size()>0){
            qw.notIn("user_id",userAllVO.getUserIds());
        }
-       int count = userMapper.selectCount(qw);
+        qw.eq(ObjectUtils.isNotEmpty(userAllVO.getDepId()),"dep_id",userAllVO.getDepId());
+        int count = userMapper.selectCount(qw);
        List<User> users = userMapper.selectPage(new Page<>(userAllVO.getCurrent(),userAllVO.getSize()),qw).getRecords();
        List<ProUserVO> proUserVOS = new ArrayList<>();
         for (User user : users) {
@@ -185,6 +185,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return RepResult.repResult(0,"成功",proUserVOS,count);
     }
 
+    @Override
+    public Object getAlldept() {
+        return  RepResult.repResult(0, "查询成功",departmentMapper.selectList(new QueryWrapper<Department>()));
+    }
 
 
     public Object getDepartment(){

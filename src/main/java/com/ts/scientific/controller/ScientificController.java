@@ -119,6 +119,10 @@ public class ScientificController {
                 return userServiceImpl.getAllUser(userAllVO);
         }
 
+        @GetMapping("/getAlldept")
+        public Object getAlldept(){
+            return userServiceImpl.getAlldept();
+        }
         /**
          * 材料上报
          */
