@@ -82,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userDto.setDepName(department.getDepName());
             userDto.setDepId(department.getId());
             userDto.setTitleName(title.getTitleName());
+            userDto.setStandardScore(user.getStandardScore());
             return userDto;
         }).collect(Collectors.toList());
         return RepResult.repResult(0, "查询成功", dtoList, (int)userPage.getTotal());

@@ -28,7 +28,15 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item"><a href="./performanceMsg/performance.html"  style="display: none" target="contentFrame" id="performance">科研绩效</a></li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;" style="display: none" id="performance">科研绩效</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="./performanceMsg/performance.html" target="contentFrame" style="display: none"  id="performanceStatistics">绩效统计</a></dd>
+                        <dd><a href="./performanceMsg/personalPerformance.html" target="contentFrame"  style="display: none" id="personalPerformance">个人绩效</a></dd>
+                        <dd><a href="./performanceMsg/deptPerformance.html" target="contentFrame"  style="display: none" id="deptPerformance">部门汇总</a></dd>
+                    </dl>
+                </li>
+<!--                <li class="layui-nav-item"><a href="./performanceMsg/performance.html"  style="display: none" target="contentFrame" id="performance">科研绩效</a></li>-->
                 <li class="layui-nav-item"><a href="./scientificMsg/scientific.html" target="contentFrame" style="display: none" id="project">科研项目</a></li>
                 <li class="layui-nav-item layui-nav-itemed">
                     <a class="" href="javascript:;" style="display: none" id="projectInfo">科研信息</a>

@@ -24,6 +24,9 @@ $(function () {
         $("#projectInfo").show()
         $("#addProject").show()
         $("#detail").show()
+        $("#performanceStatistics").show()
+        $("#personalPerformance").show()
+        $("#deptPerformance").show()
     }
     console.log(data[roleId])
    for (const item in data[roleId]) {
@@ -34,6 +37,15 @@ $(function () {
        }
        if (data[roleId][item]  === "performance") {
            $("#performance").show();
+       }
+       if (data[roleId][item]  === "deptPerformance") {
+           $("#deptPerformance").show();
+       }
+       if (data[roleId][item]  === "performanceStatistics") {
+           $("#performanceStatistics").show();
+       }
+       if (data[roleId][item]  === "personalPerformance") {
+           $("#personalPerformance").show();
        }
        if (data[roleId][item]  === "condition") {
            $("#projectInfo").show()

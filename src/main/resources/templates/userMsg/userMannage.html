@@ -51,6 +51,7 @@
     </div>
 </div>
 <div class="layui-hide" id="userBar">
+    <a class="layui-btn layui-btn-xs" lay-event="addScore">设置基准分</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="del">删除</a>
 </div>
@@ -138,14 +139,14 @@
         </div>
     </form>
 </div>
-
 <!-- 数据表格结束 -->
 <script type="text/javascript" src="../layui/layui.js"></script>
 <script type="text/javascript" src="../layui_ext/dist/dtree.js"></script>
 
 <script type="text/javascript">
     var tableIns;//提升作用域
-
+    var userId;
+    var mainidx;
     layui.config({
         base : "../layui_ext/dist/"
     }).extend({
@@ -177,6 +178,7 @@
                 {field:'password', width:100, title: '密码'},
                 {field:'roleName', title: '角色', width: 150 }, //minWidth：局部定义当前单元格的最小宽度
                 {field:'phone', title: '手机号',width: 150},
+                {field:'standardScore', title: '基准分',width: 150},
                 {field:'createTime', title: '创建时间', width: 150},
                 {fixed: 'right', title:'操作',align:'center', toolbar: '#userBar', width:240}
             ] ]
@@ -222,6 +224,8 @@
                 deleteUserById(data);
             } else if(layEvent === 'edit'){ //编辑
                 openUpdateUserView(data);
+            }else if(layEvent === 'addScore') {
+                addScore(data);
             }
         });
 
@@ -294,6 +298,22 @@
                 })
             });
         };
+        //打开修改的弹出层
+        function addScore(data){
+            console.log(data)
+            mainIndex =  layui.use('layer',function () {
+                layer.open({
+                    type: 2,
+                    title: '基准分',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['420px', '240px'],
+                    content: 'standardScore.html'
+                });
+            });
+            mainidx =  mainIndex
+            userId = data.userId;
+        };
 
         //初始化查询角色的下拉列表
         $.get(dev+"ScientificUser/loadAllRole",function(obj){
@@ -343,6 +363,7 @@
             }
         })
     }
+
 </script>
 </body>
 </html>

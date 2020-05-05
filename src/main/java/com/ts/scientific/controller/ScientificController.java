@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ts.scientific.config.BizException;
+import com.ts.scientific.dto.DeptStatisticsDto;
 import com.ts.scientific.dto.StatisticsDetailDto;
 import com.ts.scientific.entity.*;
+import com.ts.scientific.mapper.ScientificExtendMapper;
 import com.ts.scientific.mapper.ScientificProPeopleInfoMapper;
 import com.ts.scientific.mapper.ScientificProPeopleMapper;
 import com.ts.scientific.service.StatisticsDetailService;
@@ -25,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -59,6 +62,9 @@ public class ScientificController {
 
         @Resource
         private ScientificProPeopleMapper scientificProPeopleMapper;
+
+        @Resource
+        private ScientificExtendMapper scientificExtendMapper;
         /**
          * 科研绩效查询
          */
@@ -196,6 +202,32 @@ public class ScientificController {
         public Object getCurrentProPeople(int current,int size,Integer proId){
                 return scientificProServiceImpl.getCurrentProPeople(current,size,proId);
         }
+
+    /**
+     * 获取个人绩效
+     */
+    @GetMapping("/getPersonalPerformance")
+    public Object getPersonalPerformance(Integer current,Integer size){
+        return scientificProServiceImpl.getPersonalPerformance(current,size);
+    }
+
+    /**
+     * 获取部门汇总
+     */
+    @GetMapping("/getDeptPerformance")
+    public Object getDeptPerformance(Integer current,Integer size){
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+
+        Map<String,Object> map = new HashMap<>();
+
+        map.put("depId",user.getDepId());
+        int count = scientificExtendMapper.getDeptStatistics(map).size();
+        map.put("currentPage",(current - 1) * size);
+        map.put("pageSize",size);
+        List<DeptStatisticsDto> statisticsDtos = scientificExtendMapper.getDeptStatistics(map);
+        return RepResult.repResult(0,"",statisticsDtos,count);
+    }
+
     /**
      * 修改排名
      */

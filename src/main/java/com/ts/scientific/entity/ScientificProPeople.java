@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-03-21
+ * @since 2020-05-03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -51,6 +51,11 @@ public class ScientificProPeople implements Serializable {
      * 提交状态1:审核通过 2:审核不通过 3:进行中 4:审核中
      */
     private Integer materialsStatus;
+
+    /**
+     * 0:负责人 1.参与者
+     */
+    private Integer isPrincipal;
 
 
 }

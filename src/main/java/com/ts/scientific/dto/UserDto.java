@@ -3,6 +3,7 @@ package com.ts.scientific.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -68,5 +69,7 @@ public class UserDto implements Serializable {
      * 职称名称
      */
     private String titleName;
+
+    private BigDecimal standardScore;
 
 }

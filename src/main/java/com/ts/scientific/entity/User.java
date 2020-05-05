@@ -1,6 +1,8 @@
 package com.ts.scientific.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
@@ -14,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-03-21
+ * @since 2020-05-03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -79,5 +81,5 @@ public class User implements Serializable {
      */
     private Long titleId;
 
-
+    private BigDecimal standardScore;
 }

@@ -13,10 +13,7 @@ import com.ts.scientific.mapper.*;
 import com.ts.scientific.service.ScientificProService;
 import com.ts.scientific.util.RepResult;
 import com.ts.scientific.util.WebUtils;
-import com.ts.scientific.vo.FindProVO;
-import com.ts.scientific.vo.ProPeopleVO;
-import com.ts.scientific.vo.ProSeeVO;
-import com.ts.scientific.vo.ProVO;
+import com.ts.scientific.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +46,8 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
     private UserMapper userMapper;
     @Autowired
     private AuthServiceImpl authServiceImpl;
+    @Autowired
+    private StatisticsDetailMapper statisticsDetailMapper;
     @Override
     public Object addPro(ProVO proVO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -77,6 +76,11 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             proPeople.setCreateTime(now);
             proPeople.setMaterialsStatus(3);
             proPeople.setRank(i++);
+            if (user.getUserId().equals(userId)){
+                proPeople.setIsPrincipal(0);
+            }else{
+                proPeople.setIsPrincipal(1);
+            }
             scientificProPeopleList.add(proPeople);
         }
         if (scientificProPeopleList.size()>0) {
@@ -166,8 +170,13 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             if (user.getRoleId()==1 || user.getUserId() == scientificPro.getCreateId() || authCode.get(user.getRoleId())!=null && authCode.get(user.getRoleId()).contains("audit")){
                 proPeopleVO.setAuditFlag(1);
             }
+            User us =  userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId()));
             proPeopleVO.setProStatus(scientificPro.getProStatus());
-            proPeopleVO.setUserName(userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUserId,proPeople.getUserId())).getUserName());
+            proPeopleVO.setUserName(us.getUserName());
+            if (proPeople.getIsPrincipal() == 0){
+                proPeopleVO.setPrincipal(us.getUserName());
+                proPeopleVO.setUserName(null);
+            }
             proPeopleVOS.add(proPeopleVO);
         }
         return RepResult.repResult(0,"",proPeopleVOS,Integer.valueOf(String.valueOf(proPeopleIPage.getTotal())));
@@ -208,6 +217,38 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         scientificProPeople.setMaterialsStatus(status);
         return scientificProPeopleMapper.update(scientificProPeople,new QueryWrapper<ScientificProPeople>().lambda()
                 .eq(ScientificProPeople::getProPeopleId,proPeopleId));
+    }
+
+    @Override
+    public Object getPersonalPerformance(int current, int size) {
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+        IPage performanceVOIPage = new Page<>();
+        performanceVOIPage.setCurrent(current);
+        performanceVOIPage.setSize(size);
+        IPage<StatisticsDetail> page = statisticsDetailMapper.selectPage(performanceVOIPage,new QueryWrapper<StatisticsDetail>().lambda()
+        .eq(StatisticsDetail::getUserId,user.getUserId()));
+
+        List<PersonalPerformanceVO> vos = new ArrayList<>();
+        PersonalPerformanceVO vo = null;
+        for (StatisticsDetail record : page.getRecords()) {
+            vo = new PersonalPerformanceVO();
+            BeanUtils.copyProperties(record,vo);
+            ScientificPro scientificPro = scientificProMapper.selectOne(new QueryWrapper<ScientificPro>().lambda().eq(ScientificPro::getProId,record.getProId()));
+            List<ScientificProPeople>  proPeopleIds =  scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
+                    .eq(ScientificProPeople::getUserId,user.getUserId())
+                    .eq(ScientificProPeople::getProId,record.getProId()));
+            ScientificInfo scientificInfo =  scientificInfoMapper.selectOne(new QueryWrapper<ScientificInfo>().lambda()
+                    .eq(ScientificInfo::getProjectTypeId,scientificPro.getProjectTypeId()));
+            vo.setProNo(scientificPro.getProNo());
+            if (proPeopleIds.size()>0 && proPeopleIds.get(0).getIsPrincipal() == 0 ){
+                vo.setPrincipal("负责人");
+            }else {
+                vo.setPrincipal("参与者");
+            }
+            vo.setTypeName(scientificInfo.getProjectTypeName());
+            vos.add(vo);
+        }
+        return RepResult.repResult(0,"",vos,Integer.valueOf(String.valueOf(page.getTotal())));
     }
 
     /**

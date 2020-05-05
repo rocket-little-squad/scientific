@@ -19,4 +19,6 @@ public class ProPeopleVO extends ScientificProPeople {
     private Integer seeFlag = 0;
     //项目状态
     private Integer proStatus;
+
+    private String principal;
 }

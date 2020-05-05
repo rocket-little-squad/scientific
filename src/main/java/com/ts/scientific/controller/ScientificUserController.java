@@ -1,5 +1,7 @@
 package com.ts.scientific.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ts.scientific.entity.User;
 import com.ts.scientific.mapper.AuthMapper;
 import com.ts.scientific.mapper.CentreMapper;
 import com.ts.scientific.mapper.RoleMapper;
@@ -345,5 +347,11 @@ public class ScientificUserController {
         return RepResult.repResult(0, "登出", null);
     }
 
+    @GetMapping("/updateStandardScore")
+    public Object updateStandardScore(User user){
+        userMapper.update(user,new QueryWrapper<User>().lambda()
+                .eq(User::getUserId,user.getUserId()));
+        return RepResult.repResult(0, "成功", null);
+    }
 
 }

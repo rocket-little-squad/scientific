@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author 
- * @since 2020-03-21
+ * @since 2020-05-03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -25,7 +25,6 @@ public class Title implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-
     /**
      * 职称名
      */

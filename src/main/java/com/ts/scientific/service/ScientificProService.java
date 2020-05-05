@@ -34,4 +34,9 @@ public interface ScientificProService extends IService<ScientificPro> {
      * 项目材料状态更新
      */
     Object updateMaterialsStatus(Integer status,Integer proPeopleId);
+
+    /**
+     *  个人绩效
+     */
+    Object getPersonalPerformance(int current,int size);
 }
