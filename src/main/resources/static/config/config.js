@@ -23,6 +23,8 @@ $(function () {
         $("#project").show();
         $("#projectInfo").show()
         $("#addProject").show()
+        $("#proManage").show()
+        $("#proAudit").show();
         $("#detail").show()
         $("#performanceStatistics").show()
         $("#personalPerformance").show()
@@ -52,10 +54,15 @@ $(function () {
            $("#condition").show();
        }
        if (data[roleId][item]  === "project") {
+           $("#proManage").show()
            $("#project").show();
        }
        if (data[roleId][item]  === "addProject") {
            $("#addProject").show()
+       }
+       if (data[roleId][item]  === "proAudit") {
+           $("#proManage").show()
+           $("#proAudit").show();
        }
    };
 

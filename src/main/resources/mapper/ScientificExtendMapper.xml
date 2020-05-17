@@ -3,21 +3,24 @@
 <mapper namespace="com.ts.scientific.mapper.ScientificExtendMapper">
 
     <select id="getStatistics" resultType="com.ts.scientific.dto.StatisticsDetailDto" parameterType="com.ts.scientific.vo.StatisticsDetailVO">
-        SELECT department.dep_name as 'depName' , u.user_name as 'userName',
-        <if test="dimension == 0">
-            DATE_FORMAT(s.create_time,'%Y') as statistic,
-        </if>
-        <if test="dimension == 1">
-            DATE_FORMAT(s.create_time,'%Y-%m') as statistic,
-        </if>
-        <if test="dimension == 2">
-            DATE_FORMAT(s.create_time,'%Y-%m-%d') as statistic,
-        </if>
+        SELECT department.dep_name as 'depName' , u.user_name as 'userName', u.standard_score as 'standardScore',
+        title.title_name as 'titleName',
+<!--        <if test="dimension == 0">-->
+<!--            DATE_FORMAT(s.create_time,'%Y') as statistic,-->
+<!--        </if>-->
+<!--        <if test="dimension == 1">-->
+<!--            DATE_FORMAT(s.create_time,'%Y-%m') as statistic,-->
+<!--        </if>-->
+<!--        <if test="dimension == 2">-->
+<!--            DATE_FORMAT(s.create_time,'%Y-%m-%d') as statistic,-->
+<!--        </if>-->
         sum(s.score) as score,
         u.user_id as 'userId'
-        FROM user as u,statistics_detail as s , department where  u.user_id = s.user_id
+        FROM user as u,statistics_detail as s , department,title where  u.user_id = s.user_id
         and
         department.id = u.dep_id
+        and
+        title.id = u.title_id
         <if test="depName != null and depName != ''">
             AND    department.dep_name = #{depName}
         </if>
@@ -27,15 +30,16 @@
         <if test="userId != null and userId != ''">
             AND    u.user_id = #{userId}
         </if>
-        <if test="dimension == 0">
-            GROUP BY DATE_FORMAT(s.create_time,'%Y') ,department.dep_name,u.user_name
-        </if>
-        <if test="dimension == 1">
-            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m'),department.dep_name,u.user_name
-        </if>
-        <if test="dimension == 2">
-            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d'),department.dep_name,u.user_name
-        </if>
+        GROUP BY department.dep_name,u.user_name,u.standard_score,title.title_name, u.user_id
+        <!--        <if test="dimension == 0">-->
+<!--            GROUP BY DATE_FORMAT(s.create_time,'%Y') ,department.dep_name,u.user_name,u.standard_score-->
+<!--        </if>-->
+<!--        <if test="dimension == 1">-->
+<!--            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m'),department.dep_name,u.user_name,u.standard_score-->
+<!--        </if>-->
+<!--        <if test="dimension == 2">-->
+<!--            GROUP BY DATE_FORMAT(s.create_time,'%Y-%m-%d'),department.dep_name,u.user_name,u.standard_score-->
+<!--        </if>-->
         ORDER BY s.score DESC
         <if test="currentPage != null and currentPage !='' or
                         pageSize != null and pageSize !=''">

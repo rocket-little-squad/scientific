@@ -20,4 +20,9 @@ public class StatisticsDetailDto implements Serializable {
 
     private Integer userId;
 
+    private BigDecimal standardScore;
+
+    private String titleName;
+
+    private String isPass;
 }

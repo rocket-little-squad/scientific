@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +49,12 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
     private AuthServiceImpl authServiceImpl;
     @Autowired
     private StatisticsDetailMapper statisticsDetailMapper;
+    @Autowired
+    private DepartmentMapper departmentMapper;
+    @Autowired
+    private TitleMapper titleMapper;
+
+
     @Override
     public Object addPro(ProVO proVO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -245,10 +252,32 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
             }else {
                 vo.setPrincipal("参与者");
             }
+            vo.setStandardScore(user.getStandardScore());
             vo.setTypeName(scientificInfo.getProjectTypeName());
             vos.add(vo);
         }
         return RepResult.repResult(0,"",vos,Integer.valueOf(String.valueOf(page.getTotal())));
+    }
+
+    @Override
+    public Object getTotalScore() {
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+      List<StatisticsDetail> statisticsDetails = statisticsDetailMapper.selectList(new QueryWrapper<StatisticsDetail>().lambda()
+                .eq(StatisticsDetail::getUserId,user.getUserId()));
+        BigDecimal sum = BigDecimal.ZERO;
+      if (!statisticsDetails.isEmpty()){
+         sum = statisticsDetails.stream().map(StatisticsDetail::getScore).reduce(BigDecimal::add).get();
+      }
+        Department department =   departmentMapper.selectOne(new QueryWrapper<Department>().lambda()
+                .eq(Department::getId,user.getDepId()));
+
+       Title title = titleMapper.selectOne(new QueryWrapper<Title>().lambda()
+                .eq(Title::getId,user.getTitleId()));
+        TotalScoreVO totalScoreVO = new TotalScoreVO();
+        totalScoreVO.setDepName(department.getDepName());
+        totalScoreVO.setTitle(title.getTitleName());
+        totalScoreVO.setTotalScore(sum);
+        return RepResult.repResult(0,"",totalScoreVO);
     }
 
     /**

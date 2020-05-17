@@ -10,6 +10,22 @@
     <script src="../config/config.js"></script>
 </head>
 <body class="global-body-mp">
+<form class="layui-form layui-form-pane" style="margin-top: 100px" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">总分:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="score" disabled lay-verify="required" id="totalScore" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">部门名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="depName" disabled lay-verify="required" id="depName" autocomplete="off" class="layui-input">
+        </div>
+        <label class="layui-form-label">职称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" disabled lay-verify="required" id="title" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+</form>
 <div class="layui-tab-item layui-show" style="margin-top: 80px">
     <div class="layui-row">
         <div class="layui-col-xs12">
@@ -44,6 +60,23 @@
 </body>
 </html>
 <script>
+
+    $(function () {
+        $.ajax({
+            type: "get",
+            url: dev+"scientific/getTotalScore",
+            async:false,
+            data: {
+            },
+            success: function(res) {
+                var data = res.data;
+                $("#totalScore").val(data.totalScore)
+                $("#depName").val(data.depName)
+                $("#title").val(data.title)
+                form.render();
+            }
+        })
+    })
 
     $("#find").click(function () {
         console.log(123)
@@ -115,6 +148,7 @@
             }
             ,cols: [[
                 {field:'proNo', width: tableWidth*0.1, title: '项目编号'}
+                ,{field:'standardScore', width:tableWidth*0.1, title: '基准分'}
                 ,{field:'typeName', width:tableWidth*0.15, title: '项目类型'}
                 ,{field:'principal', width:tableWidth*0.1, title: '参与者或者负责人'}
                 ,{field:'score', width:tableWidth*0.1, title: '积分'}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <script src="../layui/layui.js"></script>
+    <script src="../layui/layui.all.js"></script>
+    <script src="../js/jquery-3.4.1.js"></script>
+    <script src="../config/config.js"></script>
+</head>
+<body class="global-body-mp">
+<div class="layui-tab-item layui-show" style="margin-top: 80px">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form">
+                <div class="layui-col-xs12">
+                    <div class="layui-form-item" >
+                        <label class="layui-form-label" >项目类别:</label>
+                        <div  class="layui-input-block" style="width: 300px">
+                            <select  lay-filter="type" id="proType" required>
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="margin-left: 600px">
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-normal" id="find">查询</button>
+                        </div>
+                        <!--<div class="layui-inline">
+                            <button class="layui-btn" id="reset">重置</button>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="info" lay-filter="demo"></div>
+</body>
+</html>
+<script type="text/html" id="barDemo">
+    {{# if(d.proStatus != 2){ }}
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="audit">审核</a>
+    {{#  } }}
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">项目人员</a>
+</script>
+<script type="text/html" id="status">
+    {{#  if(d.proStatus == 1){ }}
+    进行中
+    {{#  } else if(d.proStatus == 2){ }}
+    审核通过
+    {{#  } else if(d.proStatus == 3){ }}
+    审核不通过
+    {{#  } else if(d.proStatus == 4){ }}
+    超时
+    {{#  } else if(d.proStatus == 5){ }}
+    已结算
+    {{#  } }}
+</script>
+<script>
+    var proId;
+
+    layui.use('form', function () {
+        var form = layui.form;
+        $.ajax({
+            type: "get",
+            url: dev + "scientific/getType",
+            async: false,
+            data: {},
+            success: function (res) {
+                var data = res.data;
+                $.each(data, function (index, item) {
+                    $("#proType")
+                        .append(
+                            "<option value='" + item.projectTypeId + "'>"
+                            + item.projectTypeName + "</option>");
+                })
+                //form.render(null, 'merchant');
+                form.render();
+            }
+        })
+    })
+
+    $("#find").click(function () {
+        find();
+    })
+
+    function find(){
+        layui.table.reload('info',{
+            where: {
+                projectTypeId:$("#proType").val()
+            }});
+    }
+
+
+    function reload(){
+        layui.table.reload('info',{
+            where: {
+
+            }});
+    }
+
+
+    layui.use('table', function(){
+        var tableWidth = $("#info").width() - 28;
+        var table = layui.table;
+        table.render({
+            id:'info',
+            elem: '#info'
+            ,url:dev + 'scientific/getPro'
+            ,request: {
+                pageName: 'current'
+                ,limitName: 'size'
+            },
+            where:{
+            },
+            response: {
+                statusName: 'code'
+                ,statusCode: 0
+                ,msgName: 'msg'
+                ,countName: 'count'
+                ,dataName: 'data'
+            }
+            ,cols: [[
+                {field:'proType', width: tableWidth*0.1, title: '项目类别', }
+                ,{field:'calculateName', width:tableWidth*0.15, title: '计算条件'}
+                ,{field:'start', width:tableWidth*0.1, title: '开始时间',}
+                ,{field:'end', width:tableWidth*0.1, title: '结束时间'}
+                ,{field:'createName', width:tableWidth*0.1, title: '创建人',}
+                ,{field:'proNo', width:tableWidth*0.1, title: '项目编号'}
+                ,{field:'proStatus', width:tableWidth*0.1, title: '项目状态',toolbar:'#status'}
+                ,{field:'proNo', width:tableWidth*0.1, title: '操作',toolbar:'#barDemo'}
+            ]]
+            ,page: true
+        });
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                proId = data.proId;
+                layui.use('layer',function () {
+                    layer.open({
+                        type: 2,
+                        title: '查看项目人员',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['100%', '100%'],
+                        content: 'AuditPeople.html'
+                    });
+                });
+            }else if (obj.event === 'audit'){
+                layer.open({
+                    btn: ['通过', '不通过']
+                    ,yes: function(index, layero){
+                        $.ajax({
+                            type: "get",
+                            url: dev + "scientific/proAudit",
+                            async: false,
+                            data: {
+                                id: data.proId
+                            },
+                            success: function (res) {
+                                layer.msg("成功");
+                                reload();
+                            }
+                        })
+                    },btn2: function(index, layero){
+                        $.ajax({
+                            type: "get",
+                            url: dev + "scientific/proAudit",
+                            async: false,
+                            data: {
+                                id: data.proId
+                            },
+                            success: function (res) {
+                                layer.msg("成功");
+                                reload();
+                            }
+                        })
+                    }
+                });
+            }
+        });
+    });
+
+    layui.use('form', function() {
+        var form = layui.form;
+        form.render();
+    })
+</script>

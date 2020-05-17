@@ -38,6 +38,14 @@ public class StatisticsDetailServiceImpl extends ServiceImpl<StatisticsDetailMap
         if (user.getRoleId() != 1 || authCode.get(user.getRoleId()) != null && !authCode.get(user.getRoleId()).contains("allPerformance")){
             statisticsDetailVO.setUserId(user.getUserId());
         }
-        return scientificExtendMapper.getStatistics(statisticsDetailVO);
+        List<StatisticsDetailDto> statisticsDetailDtos =  scientificExtendMapper.getStatistics(statisticsDetailVO);
+        for (StatisticsDetailDto detailDto : statisticsDetailDtos) {
+            if (detailDto.getStandardScore().compareTo(detailDto.getScore())>0){
+                detailDto.setIsPass("不通过");
+            }else{
+                detailDto.setIsPass("通过");
+            }
+        }
+        return statisticsDetailDtos;
     }
 }

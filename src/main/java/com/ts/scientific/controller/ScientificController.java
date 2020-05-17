@@ -212,6 +212,13 @@ public class ScientificController {
     }
 
     /**
+     * 获取个人绩效
+     */
+    @GetMapping("/getTotalScore")
+    public Object getTotalScore(){
+        return scientificProServiceImpl.getTotalScore();
+    }
+    /**
      * 获取部门汇总
      */
     @GetMapping("/getDeptPerformance")
@@ -247,6 +254,17 @@ public class ScientificController {
     @RequestMapping("audit")
     public Object audit(String id,String bank){
         return scientificProServiceImpl.getAudit(id,bank);
+    }
+
+
+    /**
+     * 项目审核
+     */
+    @RequestMapping("/proAudit")
+    public Object audit(String id){
+        ScientificPro scientificPro = new ScientificPro();
+        scientificPro.setProStatus(2);
+        return scientificProServiceImpl.update(scientificPro,new QueryWrapper<ScientificPro>().lambda().eq(ScientificPro::getProId,id));
     }
     //===========科研信息开始===============
 

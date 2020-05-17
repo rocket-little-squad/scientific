@@ -39,4 +39,9 @@ public interface ScientificProService extends IService<ScientificPro> {
      *  个人绩效
      */
     Object getPersonalPerformance(int current,int size);
+
+    /**
+     * 获取个人总分
+     */
+    Object getTotalScore();
 }

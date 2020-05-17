@@ -17,17 +17,17 @@
                 <div class="layui-form-item">
                     <div class="layui-row">
                         <div class="layui-col-xs12">
-                            <div class="layui-inline"  style="margin-top: 5px;" >
-                                <label class="layui-form-label" style="width: 50px">统计维度：</label>
-                                <div  class="layui-input-block" style="width: 200px">
-                                    <select id="time" >
-                                        <option value=""></option>
-                                        <option value="0">年</option>
-                                        <option value="1">月</option>
-                                        <option value="2">日</option>
-                                    </select>
-                                </div>
-                            </div>
+<!--                            <div class="layui-inline"  style="margin-top: 5px;" >-->
+<!--                                <label class="layui-form-label" style="width: 50px">统计维度：</label>-->
+<!--                                <div  class="layui-input-block" style="width: 200px">-->
+<!--                                    <select id="time" >-->
+<!--                                        <option value=""></option>-->
+<!--                                        <option value="0">年</option>-->
+<!--                                        <option value="1">月</option>-->
+<!--                                        <option value="2">日</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
                             <div class="layui-inline" style="margin-top: 5px;" >
                                 <label class="layui-form-label">部门:</label>
                                 <div class="layui-input-inline">
@@ -130,8 +130,11 @@
             ,cols: [[
                 {field:'userName', width: tableWidth*0.1, title: '用户名', }
                 ,{field:'depName', width:tableWidth*0.15, title: '部门'}
+                ,{field:'standardScore', width:tableWidth*0.15, title: '基准分'}
+                ,{field:'titleName', width:tableWidth*0.15, title: '职称'}
                 ,{field:'score', width:tableWidth*0.1, title: '积分',}
-                ,{field:'statistic', width:tableWidth*0.1, title: '时间维度'}
+                // ,{field:'statistic', width:tableWidth*0.1, title: '时间维度'}
+                ,{field:'isPass', width:tableWidth*0.15, title: '是否通过'}
             ]]
             ,page: true
         });
