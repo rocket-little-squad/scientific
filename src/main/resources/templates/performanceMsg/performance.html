@@ -29,6 +29,12 @@
 <!--                                </div>-->
 <!--                            </div>-->
                             <div class="layui-inline" style="margin-top: 5px;" >
+                                <label class="layui-form-label">用户:</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="depName"  lay-filter="userName" placeholder="请输入" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline" style="margin-top: 5px;" >
                                 <label class="layui-form-label">部门:</label>
                                 <div class="layui-input-inline">
                                     <input type="text" id="depName"  lay-filter="depName" placeholder="请输入部门" class="layui-input">
@@ -64,10 +70,12 @@
     function find(){
         var time = $('#time').val();
         var depName = $('#depName').val();
+        var userName = $('#userName').val();
         layui.table.reload('info',{
             where: {
                 dimension:time,
-                depName:depName
+                depName:depName,
+                userName:userName
             }});
     }
     layui.use('form', function() {

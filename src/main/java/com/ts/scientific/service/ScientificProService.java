@@ -44,4 +44,6 @@ public interface ScientificProService extends IService<ScientificPro> {
      * 获取个人总分
      */
     Object getTotalScore();
+
+    Object getAuditPro(FindProVO findProVO, HttpServletRequest request);
 }

@@ -200,11 +200,11 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
                 kens = false;
             }
         }
-        if(kens){
-            ScientificPro scientificPro = scientificProMapper.selectById(scientificProPeople.getProId());
-            ScientificPro scientificPro1 = scientificPro.setProStatus(2);
-            int i1 = scientificProMapper.updateById(scientificPro1);
-        }
+//        if(kens){
+//            ScientificPro scientificPro = scientificProMapper.selectById(scientificProPeople.getProId());
+//            ScientificPro scientificPro1 = scientificPro.setProStatus(2);
+//            int i1 = scientificProMapper.updateById(scientificPro1);
+//        }
         return RepResult.repResult(0,"修改成功",null);
     }
 
@@ -278,6 +278,52 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         totalScoreVO.setTitle(title.getTitleName());
         totalScoreVO.setTotalScore(sum);
         return RepResult.repResult(0,"",totalScoreVO);
+    }
+
+    @Override
+    public Object getAuditPro(FindProVO findProVO, HttpServletRequest request) {
+
+        Map<String,List<String>> authCode = authServiceImpl.queryRoleAuth();
+        User user = (User) WebUtils.getHttpSession().getAttribute("user");
+//        String aCode=
+//        if (authCode.get(user.getRoleId())!=null){
+//            ///proPeopleVO.setFlag(1);
+//              authCode.get(user.getRoleId()).contains("allPro");
+//        }
+        IPage<ScientificPro> page = new Page<>();
+        page.setCurrent(findProVO.getCurrent());
+        page.setSize(findProVO.getSize());
+        List<ProSeeVO> proSeeVOS = new ArrayList<>();
+        List<ScientificProPeople>  proPeopleIds =  scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getUserId,user.getUserId()));
+        LambdaQueryWrapper<ScientificPro> qw = new LambdaQueryWrapper<>();
+        if (findProVO.getProjectTypeId()!=null){
+            qw.eq(ScientificPro::getProjectTypeId,findProVO.getProjectTypeId());
+        }
+//        if (user.getRoleId() != 1) {
+//            qw.and(w -> w.eq(ScientificPro::getCreateId, user.getUserId()).or().in(proPeopleIds != null && proPeopleIds.size() > 0, ScientificPro::getProId, proPeopleIds.stream().map(ScientificProPeople::getProId).collect(Collectors.toList())));
+//        }
+        List<ScientificPro> scientificPros = scientificProMapper.selectPage(page,qw).getRecords();
+        ProSeeVO proSeeVO = null;
+        for (ScientificPro pro : scientificPros) {
+            proSeeVO = new ProSeeVO();
+            proSeeVO.setProId(pro.getProId());
+            proSeeVO.setCalculateName(scientificInfoConfMapper.selectOne(new QueryWrapper<ScientificInfoConf>().lambda()
+                    .eq(ScientificInfoConf::getCalculateId,pro.getCalculateId())).getCalculateCondition());
+            proSeeVO.setProType(scientificInfoMapper.selectOne(new QueryWrapper<ScientificInfo>().lambda()
+                    .eq(ScientificInfo::getProjectTypeId,pro.getProjectTypeId())).getProjectTypeName());
+            proSeeVO.setCreateName(pro.getCreateName());
+            proSeeVO.setProNo(pro.getProNo());
+            proSeeVO.setEnd(pro.getEndTime());
+            proSeeVO.setStart(pro.getStartTime());
+            proSeeVO.setProStatus(pro.getProStatus());
+            List<ScientificProPeople> list = scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
+                    .eq(ScientificProPeople::getProId,pro.getProId()));
+            List<ProPeopleVO> proPeopleVOS = new ArrayList<>();
+            proSeeVO.setProPeopleVOS(proPeopleVOS);
+            proSeeVOS.add(proSeeVO);
+        }
+        return proSeeVOS;
     }
 
     /**

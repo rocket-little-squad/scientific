@@ -25,7 +25,7 @@
             AND    department.dep_name = #{depName}
         </if>
         <if test="userName != null and userName != ''">
-            AND    u.user_name = #{userName}
+            AND    u.user_name like '%${userName}%'
         </if>
         <if test="userId != null and userId != ''">
             AND    u.user_id = #{userId}

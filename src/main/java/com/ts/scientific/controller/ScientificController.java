@@ -195,6 +195,12 @@ public class ScientificController {
                 return RepResult.repResult(0,"",scientificProServiceImpl.getPro(findProVO,request),count);
         }
 
+         @GetMapping("/getAuditPro")
+         public  Object getAuditPro(FindProVO findProVO,HttpServletRequest request){
+             int count = scientificInfoConfServiceImpl.count();
+             return RepResult.repResult(0,"",scientificProServiceImpl.getAuditPro(findProVO,request),count);
+        }
+
         /**
          * 获取当前项目人员
          */
@@ -262,9 +268,15 @@ public class ScientificController {
      */
     @RequestMapping("/proAudit")
     public Object audit(String id){
+        if (scientificProPeopleMapper.selectCount(new QueryWrapper<ScientificProPeople>().lambda()
+                .eq(ScientificProPeople::getProId,id)
+                .ne(ScientificProPeople::getMaterialsStatus,1))> 0){
+            throw  new RuntimeException("请检查当前项目人员是否都审核通过");
+        }
         ScientificPro scientificPro = new ScientificPro();
         scientificPro.setProStatus(2);
-        return scientificProServiceImpl.update(scientificPro,new QueryWrapper<ScientificPro>().lambda().eq(ScientificPro::getProId,id));
+         scientificProServiceImpl.update(scientificPro,new QueryWrapper<ScientificPro>().lambda().eq(ScientificPro::getProId,id));
+        return RepResult.repResult(0,"成功",null);
     }
     //===========科研信息开始===============
 
