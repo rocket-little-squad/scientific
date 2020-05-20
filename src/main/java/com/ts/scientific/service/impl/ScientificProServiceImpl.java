@@ -294,8 +294,7 @@ public class ScientificProServiceImpl extends ServiceImpl<ScientificProMapper, S
         page.setCurrent(findProVO.getCurrent());
         page.setSize(findProVO.getSize());
         List<ProSeeVO> proSeeVOS = new ArrayList<>();
-        List<ScientificProPeople>  proPeopleIds =  scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda()
-                .eq(ScientificProPeople::getUserId,user.getUserId()));
+        List<ScientificProPeople>  proPeopleIds =  scientificProPeopleMapper.selectList(new QueryWrapper<ScientificProPeople>().lambda());
         LambdaQueryWrapper<ScientificPro> qw = new LambdaQueryWrapper<>();
         if (findProVO.getProjectTypeId()!=null){
             qw.eq(ScientificPro::getProjectTypeId,findProVO.getProjectTypeId());

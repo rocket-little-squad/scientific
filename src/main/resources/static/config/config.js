@@ -44,6 +44,7 @@ $(function () {
            $("#deptPerformance").show();
        }
        if (data[roleId][item]  === "performanceStatistics") {
+           $("#performance").show();
            $("#performanceStatistics").show();
        }
        if (data[roleId][item]  === "personalPerformance") {
